@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import './style.css'
 import { Link } from 'react-router-dom'
 
 class Home extends Component {
@@ -9,7 +8,7 @@ class Home extends Component {
       <div>
         <Link to="/collections">Collections</Link><br />
         <Link to="/404">missing</Link><br />
-        <Link to="/fassdfd">bad link</Link>
+        <Link to="/fassdfd">bad lin</Link>
       </div>
     );
   }

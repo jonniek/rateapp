@@ -1,0 +1,32 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: sans-serif;
+  background-color: #ddd;
+}
+h1,h2,h3,.center-children{
+  text-align: center;
+}
+h1{
+  margin:30px;
+}
+hr{
+  border-color:#aaa;
+}
+
+
+/*Collections styles*/
+.image-container{
+  display:inline-block;
+}
+.versus{
+  margin:0 25px;
+}
+.comparison-container{
+  margin-top:30px;
+  user-select: none;
+}
+.comparison-container .btn{
+  margin-top:30px;
+}
+/*Override bootstrap*/
