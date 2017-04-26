@@ -13,9 +13,76 @@ h1{
 hr{
   border-color:#aaa;
 }
-
-
+/*results styles*/
+.result-image-container{
+  margin:10px 0;
+}
+.question-container .btn{
+  margin-left: 10px;
+}
 /*Collections styles*/
+.collections-container{
+  margin-left:-20px;
+  margin-right: -20px;
+  display: flex;
+  flex-flow: wrap;
+  justify-content: space-around;
+}
+.collection-card{
+  display:inline-block;
+  margin:10px 20px;
+  padding: 15px;
+  background-color:#fff;
+  width:300px;
+}
+.card-image{
+  width: 100%;
+  height: 200px;
+  background-size: cover;
+  background-position: center;
+  transition: 0.5s all;
+}
+.card-image:hover{
+  filter:brightness(120%);
+}
+.card-info h3{
+  font-size: 18px;
+}
+.sort-container{
+  margin:10px 50px;
+}
+.cat{
+  margin-left: 5px;
+  cursor:pointer;
+  color:#337ab7;
+}
+.cat:hover{
+  color:#23527c;
+  text-decoration: underline;
+}
+.search{
+  margin: 1px 10px 0 10px;
+  position: relative;
+  float:right;
+}
+.search-x{
+  font-weight: bold;
+  font-size: 20px;
+  color: rgba(255,100,100,0.8);
+  position: absolute;
+  right: 5px;
+  top: -5px;
+  padding: 5px;
+  cursor:pointer;
+}
+.search
+.collections .btn-toolbar .search,
+.collections .btn-toolbar .btn-group,
+.collections .btn-toolbar .btn {
+  float:right;
+}
+
+/*Collection styles*/
 .image-container{
   display:inline-block;
 }
@@ -29,4 +96,54 @@ hr{
 .comparison-container .btn{
   margin-top:30px;
 }
+
 /*Override bootstrap*/
+.dropdown-menu > li > a:hover{
+  background-color: #2e6da4;
+  background-image: linear-gradient(to bottom, #337ab7 0%, #2e6da4 100%);
+  color:#fff;
+}
+
+
+/*spinner */
+.loader,
+.loader:after {
+  border-radius: 50%;
+  width: 10em;
+  height: 10em;
+}
+.loader {
+  margin: 60px auto;
+  font-size: 10px;
+  position: relative;
+  text-indent: -9999em;
+  border-top: 1.1em solid rgba(128,212,83, 0.2);
+  border-right: 1.1em solid rgba(128,212,83, 0.2);
+  border-bottom: 1.1em solid rgba(128,212,83, 0.2);
+  border-left: 1.1em solid #80d453;
+  -webkit-transform: translateZ(0);
+  -ms-transform: translateZ(0);
+  transform: translateZ(0);
+  -webkit-animation: load8 1.1s infinite linear;
+  animation: load8 1.1s infinite linear;
+}
+@-webkit-keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}
+@keyframes load8 {
+  0% {
+    -webkit-transform: rotate(0deg);
+    transform: rotate(0deg);
+  }
+  100% {
+    -webkit-transform: rotate(360deg);
+    transform: rotate(360deg);
+  }
+}

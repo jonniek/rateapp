@@ -1,14 +1,16 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
+import { NavBar } from '../../Components/'
 
 class Home extends Component {
   
   render() {
     return (
       <div>
-        <Link to="/collections">Collections</Link><br />
-        <Link to="/404">missing</Link><br />
-        <Link to="/fassdfd">bad lin</Link>
+        <NavBar />
+        <h2>Welcome to RateApp!</h2>
+        <div className="center-children">
+          <p>Rateapp is a fun way to rank images into a certain order</p>
+        </div>
       </div>
     );
   }

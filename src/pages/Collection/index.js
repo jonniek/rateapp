@@ -1,5 +1,4 @@
 import React, { Component } from 'react'
-import { Link } from 'react-router-dom'
 import { Button } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 
@@ -8,9 +7,8 @@ import { ImageContainer, NavBar } from '../../Components/'
 export default class Collections extends Component {
   constructor(props){
     super()
-    console.log(props)
     this.state = {
-      question: "",
+      questions: [],
       images : [],
       fetched: false,
     }
@@ -45,6 +43,7 @@ export default class Collections extends Component {
   componentDidMount() {
     setTimeout(function(){
       this.setState({
+        title: "Dota 2 heroes",
         questions: [
           "Which one is better?",
           "Which one wins 1v1 mid?",
@@ -68,11 +67,11 @@ export default class Collections extends Component {
     return(
       <div>
         <NavBar />
-        { this.state.images.length === 0 && !this.state.fetched && <h2>Loading...</h2>}
+        { this.state.images.length === 0 && !this.state.fetched && <h2><div className="loader">Loading...</div></h2>}
         { this.state.images.length === 0 && this.state.fetched && <h2>404 Page not found</h2>}
         { this.state.images.length !== 0 &&
           <div>
-            <h2>{ this.props.match.params.slug }</h2>
+            <h2>{ this.state.title }</h2>
             <hr />
             <h3>{ this.state.questions[this.state.currentQuestion] }</h3>
             <div className="comparison-container center-children">
@@ -80,7 +79,7 @@ export default class Collections extends Component {
               <span className="versus">VS</span>
               <ImageContainer onClick={this.setWinner} index={1} image={this.state.images[this.state.selectedImages[1]]} />
               <div className="clearfix" />
-              <LinkContainer exact to="/collections/">
+              <LinkContainer exact to={`/collections/${this.props.match.params.slug}/results`}>
                 <Button className="results">Results</Button>
               </LinkContainer>
             </div>

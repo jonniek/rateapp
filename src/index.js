@@ -5,7 +5,7 @@ import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 
 import Home from './pages/Home'
 import Collections from './pages/Collections/'
-//import Login from './pages/Login/'
+import Results from './pages/Results/'
 import Collection from './pages/Collection/'
 import NotFound from './pages/NotFound/'
 
@@ -18,6 +18,7 @@ ReactDOM.render(
     <div>
       <Switch>
         <Route exact path="/" component={ Home } />
+        <Route exact path="/collections/:slug/results" component={Results} />
         <Route path="/collections/:slug" component={Collection} />
         <Route exact path="/collections" component={ Collections } />
         <Route component={NotFound} />

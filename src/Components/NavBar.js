@@ -20,6 +20,11 @@ export default class ImageContainer extends Component{
           </Navbar.Header>
           <Navbar.Collapse>
             <Nav>
+              <LinkContainer exact to="/">
+                <NavItem eventKey={1}>Home</NavItem>
+              </LinkContainer>
+            </Nav>
+            <Nav>
               <LinkContainer exact to="/collections/">
                 <NavItem eventKey={1}>Collections</NavItem>
               </LinkContainer>
