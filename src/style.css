@@ -1,8 +1,11 @@
 body {
-  margin: 0;
+  margin: 0 0 35px 0;
   padding: 0;
   font-family: sans-serif;
-  background-color: #ddd;
+  background-color: #e3dfd1;
+}
+h1,h2,h3{
+  color:#8fb55e;
 }
 h1,h2,h3,.center-children{
   text-align: center;
@@ -11,11 +14,24 @@ h1{
   margin:30px;
 }
 hr{
-  border-color:#aaa;
+  border-color:#8fb55e;
 }
 /*results styles*/
 .result-image-container{
+  display:flex;
+  flex-flow:wrap;
+  justify-content: space-around;
+}
+.result-image{
   margin:10px 0;
+  position: relative;
+}
+.order-num{
+  position: absolute;
+  color: white;
+  text-shadow: 2px 2px 1px #000;
+  font-size: 30px;
+  left: 5px;
 }
 .question-container .btn{
   margin-left: 10px;
@@ -75,6 +91,9 @@ hr{
   padding: 5px;
   cursor:pointer;
 }
+.search-x:hover{
+  color: rgba(255,70,70,1);
+}
 .search
 .collections .btn-toolbar .search,
 .collections .btn-toolbar .btn-group,
@@ -103,7 +122,62 @@ hr{
   background-image: linear-gradient(to bottom, #337ab7 0%, #2e6da4 100%);
   color:#fff;
 }
+.navbar-default{
+  border:none;
+  background-image: none;
+  background-color: #8fb55e;
+  border-radius: 0;
+}
+.navbar-default li a:hover{
+  background-color:#668241!important;
+}
+.navbar-default li.active a{
+  background-image: none!important;
+  background-color: #668241!important;
+}
+.navbar-default a{
+  font-size: 20px;
+  color:#fff!important;
+}
+.btn-default{
+  border:none!important;
+  background-image: none!important;
+  background-color: #8fb55e!important;
+  color:#fff!important;
+  border-radius: 0!important;
+  padding: 10px 20px!important;
+  position: relative!important;
+  box-shadow: 0 4px #668241!important;
+}
+.btn-default:active{
+  box-shadow: 0 2px #668241!important;
+  top: 2px!important;
+}
+.btn-default:hover{
+  filter:brightness(110%);
+}
+.btn-default.worst{
+  background-color: #d44646!important;
+  box-shadow: 0 4px #912a2a!important;
+}
+.btn-default.worst:active{
+  box-shadow: 0 2px #912a2a!important;
+}
 
+.dropdown-menu{
+  border-radius:0!important;
+  border:none!important;
+}
+.dropdown-menu li a{
+}
+.dropdown-menu li.active a{
+  background-image: none!important;
+  background-color: #8fb55e!important;
+}
+.dropdown-menu li a:hover{
+  background-image: none!important;
+  background-color: #8fb55e!important;
+}
 
 /*spinner */
 .loader,

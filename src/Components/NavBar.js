@@ -14,7 +14,7 @@ export default class ImageContainer extends Component{
     return (
       <div>
         <h1>RateApp</h1>
-        <Navbar collapseOnSelect inverse>
+        <Navbar collapseOnSelect>
           <Navbar.Header>
             <Navbar.Toggle />
           </Navbar.Header>

@@ -1,12 +1,7 @@
-import React, { Component } from 'react';
-import './style.css';
+import React from 'react';
+import { NavBar } from '../../Components/'
 
-export default class NotFound extends Component {
-  render() {
-    return (
-      <div>
-        <h1>404 not found :(</h1>
-      </div>
-    );
-  }
+const NotFound = () => {
+    return <div><NavBar /><h2>404 not found :(</h2></div>
 }
+export default NotFound

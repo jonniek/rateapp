@@ -72,8 +72,10 @@ export default class Results extends Component {
     const images = this.state.images
       .sort(this.sort_algorithms.handler.bind(this))
       .map((image, index) => {
+        const id = this.state.descending==1?index+1:this.state.images.length-index
         return (
-          <div key={index} className="result-image-container">
+          <div key={index} className="result-image">
+            <span className="order-num">{id}</span> 
             <img src={image.url} alt="" />
           </div>
         )
@@ -118,12 +120,12 @@ export default class Results extends Component {
                   { menuItems }
                 </DropdownButton>
                 <Button
-                  bsStyle={this.state.descending===1?'success':'danger'}
+                  className={this.state.descending===1?'best':'worst'}
                   onClick={this.toggleDescending.bind(this)}
                 >{this.state.descending===1?"Best":"Worst"}
                 </Button>
               </div>
-              { images }
+              <div className="result-image-container">{ images }</div>
             </div>
           </div>
         }
