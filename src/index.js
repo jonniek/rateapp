@@ -8,6 +8,7 @@ import Collections from './pages/Collections/'
 import Results from './pages/Results/'
 import Collection from './pages/Collection/'
 import NotFound from './pages/NotFound/'
+import Create from './pages/Create/'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/css/bootstrap-theme.css'
@@ -18,6 +19,7 @@ ReactDOM.render(
     <div>
       <Switch>
         <Route exact path="/" component={ Home } />
+        <Route exact path="/collections/create" component={Create} />
         <Route exact path="/collections/:slug/results" component={Results} />
         <Route path="/collections/:slug" component={Collection} />
         <Route exact path="/collections" component={ Collections } />

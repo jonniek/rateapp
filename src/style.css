@@ -128,16 +128,25 @@ hr{
   background-color: #8fb55e;
   border-radius: 0;
 }
-.navbar-default li a:hover{
+.navbar-default li a:hover,.navbar-default .dropdown-menu > li > a:hover{
   background-color:#668241!important;
 }
-.navbar-default li.active a{
+.navbar-default li.active a,.navbar-default .navbar-nav > .open > a,.navbar-default .dropdown-menu > li.active > a{
   background-image: none!important;
   background-color: #668241!important;
 }
 .navbar-default a{
   font-size: 20px;
   color:#fff!important;
+}
+.navbar-toggle{
+  border:none!important;
+}
+.navbar-toggle:hover,.navbar-toggle:active,.navbar-toggle:focus{
+  background-color:transparent!important;
+}
+.navbar-default .navbar-toggle .icon-bar{
+  background-color: #668241!important;
 }
 .btn-default{
   border:none!important;

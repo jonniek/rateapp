@@ -72,7 +72,7 @@ export default class Results extends Component {
     const images = this.state.images
       .sort(this.sort_algorithms.handler.bind(this))
       .map((image, index) => {
-        const id = this.state.descending==1?index+1:this.state.images.length-index
+        const id = this.state.descending===1?index+1:this.state.images.length-index
         return (
           <div key={index} className="result-image">
             <span className="order-num">{id}</span> 
