@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Button } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 
-import { ImageContainer, NavBar } from '../../Components/'
+import { ImageContainer, NavBar } from '../Components/'
 
 export default class Collections extends Component {
   constructor(props){
@@ -70,7 +70,7 @@ export default class Collections extends Component {
         { this.state.images.length === 0 && !this.state.fetched && <h2><div className="loader">Loading...</div></h2>}
         { this.state.images.length === 0 && this.state.fetched && <h2>404 Page not found</h2>}
         { this.state.images.length !== 0 &&
-          <div>
+          <div className="container">
             <h2>{ this.state.title }</h2>
             <hr />
             <h3>{ this.state.questions[this.state.currentQuestion] }</h3>

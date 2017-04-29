@@ -3,12 +3,14 @@ import ReactDOM from 'react-dom';
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 
-import Home from './pages/Home'
-import Collections from './pages/Collections/'
-import Results from './pages/Results/'
-import Collection from './pages/Collection/'
-import NotFound from './pages/NotFound/'
-import Create from './pages/Create/'
+import { 
+  Home,
+  Collection,
+  Collections,
+  Results,
+  NotFound,
+  Create,
+} from './pages/';
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/css/bootstrap-theme.css'

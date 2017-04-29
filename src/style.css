@@ -16,6 +16,18 @@ h1{
 hr{
   border-color:#8fb55e;
 }
+/*frontpage styles*/
+.intro{
+  margin-bottom: 60px;
+}
+.suggestions > div{
+  margin-bottom: 30px;
+}
+.suggestions img{
+  margin-bottom: 10px;
+  height: 150px;
+  width: auto;
+}
 /*results styles*/
 .result-image-container{
   display:flex;
@@ -36,6 +48,44 @@ hr{
 .question-container .btn{
   margin-left: 10px;
 }
+/*Create styles*/
+.singleField{
+  margin-bottom: 10px;
+}
+.add{
+  margin-bottom: 5px;
+  margin-left: 10px;
+}
+label > input{
+  display: block;
+}
+.preview-container{
+  margin-left: -10px;
+  margin-right: -10px
+}
+.preview-container div{
+  text-align: center;
+  display: inline-block;
+  padding: 10px;
+  position: relative;
+  overflow: hidden;
+  height: 110px;
+}
+img.preview{
+  height: 100px;
+  display: block;
+  width: auto;
+  padding-bottom: 5px;
+}
+.previewDelete{
+  opacity: 0;
+  position: relative;
+  top: -45px;
+  transition: 0.2s opacity;
+}
+img.preview:hover + .previewDelete, .previewDelete:hover{
+  opacity: 1;
+}
 /*Collections styles*/
 .collections-container{
   margin-left:-20px;
@@ -48,7 +98,7 @@ hr{
   display:inline-block;
   margin:10px 20px;
   padding: 15px;
-  background-color:#fff;
+  background-color:#f0f1e2;
   width:300px;
 }
 .card-image{
@@ -77,7 +127,7 @@ hr{
   text-decoration: underline;
 }
 .search{
-  margin: 1px 10px 0 10px;
+  margin: 10px 10px 0 10px;
   position: relative;
   float:right;
 }
@@ -99,6 +149,9 @@ hr{
 .collections .btn-toolbar .btn-group,
 .collections .btn-toolbar .btn {
   float:right;
+}
+.collections .createnew span{
+  vertical-align: middle;
 }
 
 /*Collection styles*/
@@ -156,7 +209,12 @@ hr{
   border-radius: 0!important;
   padding: 10px 20px!important;
   position: relative!important;
+  margin-top:5px;
+  margin-bottom: 5px;
   box-shadow: 0 4px #668241!important;
+}
+.btn-sm, .btn-group-sm > .btn{
+  padding: 5px 10px!important;
 }
 .btn-default:active{
   box-shadow: 0 2px #668241!important;
@@ -200,10 +258,10 @@ hr{
   font-size: 10px;
   position: relative;
   text-indent: -9999em;
-  border-top: 1.1em solid rgba(128,212,83, 0.2);
-  border-right: 1.1em solid rgba(128,212,83, 0.2);
-  border-bottom: 1.1em solid rgba(128,212,83, 0.2);
-  border-left: 1.1em solid #80d453;
+  border-top: 1.1em solid rgba(143, 181, 94, 0.2);
+  border-right: 1.1em solid rgba(143, 181, 94, 0.2);
+  border-bottom: 1.1em solid rgba(143, 181, 94, 0.2);
+  border-left: 1.1em solid #8fb55e;
   -webkit-transform: translateZ(0);
   -ms-transform: translateZ(0);
   transform: translateZ(0);

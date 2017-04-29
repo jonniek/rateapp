@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-import { NavBar } from '../../Components/'
+import { NavBar } from '../Components/'
 //import { LinkContainer } from 'react-router-bootstrap'
 import { ButtonToolbar, DropdownButton, MenuItem, Button } from 'react-bootstrap'
 
@@ -97,6 +97,12 @@ export default class Collections extends Component {
               <h2>Collections</h2>
               <hr />
               <ButtonToolbar>
+
+                <Link className="createnew" to="/collections/create">
+                  <img alt="create new" height="50" width="50" src={require('../../public/images/plus.png')} />
+                  <span>Create!</span>
+                </Link>
+
                 <DropdownButton
                   title={`sort by: ${this.state.sort}`}
                   id="dropdown-size-medium"
@@ -116,8 +122,10 @@ export default class Collections extends Component {
                   {`order: ${this.state.sort_descending===1?'desc':'asc'}`}
                 </Button>
                 <span className="search">
-                  <input className="sea" value={ this.state.search } onChange={this.setSearch.bind(this)} placeholder="search" />
-                  <span className="search-x" onClick={this.setSearch.bind(this, "")}>x</span>
+                  <input value={ this.state.search } onChange={this.setSearch.bind(this)} placeholder="search" />
+                  {this.state.search && 
+                    <span className="search-x" onClick={this.setSearch.bind(this, "")}>x</span>
+                  }
                 </span>
               </ButtonToolbar>
             </div>

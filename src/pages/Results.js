@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { NavBar } from '../../Components/'
+import { NavBar } from '../Components/'
 import { LinkContainer } from 'react-router-bootstrap'
 import { DropdownButton, MenuItem, Button } from 'react-bootstrap'
 
