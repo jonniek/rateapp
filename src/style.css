@@ -63,7 +63,7 @@ label > input{
   margin-left: -10px;
   margin-right: -10px
 }
-.preview-container div{
+.preview-container > div{
   text-align: center;
   display: inline-block;
   padding: 10px;
@@ -76,6 +76,9 @@ img.preview{
   display: block;
   width: auto;
   padding-bottom: 5px;
+}
+img.preview.loading{
+  opacity: 0.2
 }
 .previewDelete{
   opacity: 0;
@@ -164,6 +167,10 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
 .comparison-container{
   margin-top:30px;
   user-select: none;
+}
+.image-container img{
+  max-height: 300px;
+  width: auto;
 }
 .comparison-container .btn{
   margin-top:30px;
@@ -267,6 +274,13 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
   transform: translateZ(0);
   -webkit-animation: load8 1.1s infinite linear;
   animation: load8 1.1s infinite linear;
+}
+.imageloader{
+  position: absolute;
+  height: 50px;
+  width: 50px;
+  left: 35%;
+  top: -30px;
 }
 @-webkit-keyframes load8 {
   0% {

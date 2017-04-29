@@ -34,10 +34,32 @@ export default class Collections extends Component {
   componentWillUnmount(){
   }
 
+  uploadFile(file){
+    let data = new FormData();
+    data.append("image", file)
+    fetch("/image", {
+      mode: 'no-cors',
+      method: "POST",
+      body: data
+    }).then( res => res.json() )
+    .then( res => {
+      let files = this.state.files
+      files.forEach( (f,i) => {
+        if(f[0].preview === file.preview){
+          files[i][1] = false
+          files[i][2] = res.filename
+        }
+      })
+      this.setState({ files })
+    })
+  }
+
   onDrop(files, a, b) {
-    console.log(files)
     let newFiles = this.state.files
-    files.forEach(file => newFiles.push(file))
+    files.forEach((file, index) => {
+      newFiles.push([file, true])
+      this.uploadFile.call(this, file)
+    })
     this.setState({
       files: newFiles,
       dropzoneActive: false
@@ -47,7 +69,7 @@ export default class Collections extends Component {
   removeFile(filed){
     let newFiles = this.state.files
     newFiles = newFiles.filter(file => {
-      return file.preview !== filed.preview
+      return file[0].preview !== filed.preview
     })
     if(window){
       window.URL.revokeObjectURL(filed);
@@ -86,7 +108,23 @@ export default class Collections extends Component {
 
   handleSubmit(e){
     e.preventDefault()
-    //console.log(e.target.value)
+    let data = {
+      ownerId: "5904ffed92d85439221abf0c",
+      title: this.state.title,
+      subtitle: this.state.comparisons,
+      images: this.state.files.map(file => file[2])
+    }
+    fetch("/collections", {
+      method: "POST",
+      headers:{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify(data)
+    }).then( res => res.json() )
+    .then( res => {
+      this.props.history.push('/collections/'+res.url)
+    })
   } 
 
   render() {
@@ -162,10 +200,11 @@ export default class Collections extends Component {
                 files.map((f, index)=> {
                   return (
                     <div key={index} >
-                      <img className="preview" src={f.preview} alt="" />
+                      { f[1] && <div className="loader imageloader">Loading...</div> }
+                      <img className={f[1]?'preview loading':'preview'} src={f[0].preview} alt="" />
                       <div className="previewDelete">
                         <Button
-                          onClick={this.removeFile.bind(this, f)}
+                          onClick={this.removeFile.bind(this, f[0])}
                           className="worst"
                           bsSize="small"
                         >Delete</Button>

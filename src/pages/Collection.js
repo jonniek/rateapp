@@ -10,8 +10,11 @@ export default class Collections extends Component {
     this.state = {
       questions: [],
       images : [],
+      currentQuestion: 0,
+      selectedImages: [0, 1],
       fetched: false,
     }
+    console.log(props)
     this.setWinner = this.setWinner.bind(this)
   }
 
@@ -41,7 +44,7 @@ export default class Collections extends Component {
   }
 
   componentDidMount() {
-    setTimeout(function(){
+    /*setTimeout(function(){
       this.setState({
         title: "Dota 2 heroes",
         questions: [
@@ -59,8 +62,17 @@ export default class Collections extends Component {
         ],
         fetched: true 
       })
-    }.bind(this), 1000)
-    //fetch("/users").then(res => res.json()).then(users => this.setState({ users: users, fetched: true }))
+    }.bind(this), 1000) */
+    fetch("/collections/"+this.props.match.params.slug)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ 
+          title: data.title,
+          questions: data.subtitle,
+          images: data.images,
+          fetched: true
+        })
+      })
   }
 
   render() {
