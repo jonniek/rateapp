@@ -40,7 +40,7 @@ export default class Results extends Component {
   }
 
   componentDidMount(){
-    fetch("/collections/"+this.props.match.params.slug)
+    fetch("/api/collections/"+this.props.match.params.slug)
       .then(res => res.json())
       .then(data => {
         this.setState({ 

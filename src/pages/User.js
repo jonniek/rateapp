@@ -9,7 +9,7 @@ export default class Account extends Component {
     }
   }
   componentDidMount(){
-    fetch(/users/+this.props.match.params.slug)
+    fetch('/api/users/'+this.props.match.params.slug)
       .then(res => res.json())
       .then(data => {
         this.setState({

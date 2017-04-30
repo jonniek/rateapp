@@ -22,9 +22,9 @@ export default class Collections extends Component {
   }
 
   componentDidMount() {
-    let fetchstring = "collections"
+    let fetchstring = "/api/collections"
     if(this.props.user){
-      fetchstring=`/users/${this.props.user}/collections`
+      fetchstring=`/api/users/${this.props.user}/collections`
     }
     fetch(fetchstring)
       .then(res => res.json())

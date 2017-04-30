@@ -37,7 +37,7 @@ export default class Collections extends Component {
         this.userid = id
         this.userhash = hash
       }else{
-        fetch("/users", {
+        fetch("/api/users", {
           method: "POST",
         }).then( res => res.json() )
         .then( res => {
@@ -62,7 +62,7 @@ export default class Collections extends Component {
   uploadFile(file){
     let data = new FormData();
     data.append("image", file)
-    fetch("/image", {
+    fetch("/api/image", {
       method: "POST",
       body: data
     }).then( res => res.json() )
@@ -165,7 +165,7 @@ export default class Collections extends Component {
       categories: this.state.categories,
       images: this.state.files.map(file => file[2])
     }
-    fetch("/collections", {
+    fetch("/api/collections", {
       method: "POST",
       headers:{
         'Content-Type': 'application/json',

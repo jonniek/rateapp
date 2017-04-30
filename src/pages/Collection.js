@@ -47,7 +47,7 @@ export default class Collections extends Component {
   }
 
   componentDidMount() {
-    fetch("/collections/"+this.props.match.params.slug)
+    fetch("/api/collections/"+this.props.match.params.slug)
       .then(res => res.json())
       .then(data => {
         const nextImages = this.nextImages(data.images)

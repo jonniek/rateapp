@@ -13,7 +13,7 @@ export default class Home extends Component {
 
   goToRandom(){
     this.setState({randoming: true})
-    fetch('/random/collection')
+    fetch('/api/random/collection')
     .then(res => res.json() )
     .then( data => {
       this.props.history.push('/collections/'+data.url)
