@@ -11,6 +11,7 @@ export default class Collections extends Component {
       comparisons: [""],
       categories: [],
       files: [],
+      error: "",
       dropzoneActive: false,
     }
     this.handleSubmit = this.handleSubmit.bind(this)
@@ -29,6 +30,30 @@ export default class Collections extends Component {
   }
 
   componentDidMount(){
+    if(localStorage){
+      const id = localStorage.getItem("userid")
+      const hash = localStorage.getItem("userhash")
+      if(id && hash){
+        this.userid = id
+        this.userhash = hash
+      }else{
+        fetch("/users", {
+          method: "POST",
+        }).then( res => res.json() )
+        .then( res => {
+          this.userid = res._id
+          this.userhash = res.password
+          if(localStorage){
+            localStorage.setItem("userid", res._id)
+            localStorage.setItem("userhash", res.password)
+            localStorage.setItem("username", res.username)
+          }
+        })
+      }
+    }else{
+      this.userid = ""
+      this.userhash = ""
+    }
   }
 
   componentWillUnmount(){
@@ -38,7 +63,6 @@ export default class Collections extends Component {
     let data = new FormData();
     data.append("image", file)
     fetch("/image", {
-      mode: 'no-cors',
       method: "POST",
       body: data
     }).then( res => res.json() )
@@ -105,13 +129,40 @@ export default class Collections extends Component {
     newComparison.splice(index, 1)
     this.setState({ comparisons: newComparison })
   }
+  setError(error){
+    this.setState({error})
+    setTimeout(() => {
+      this.setState({error: ""})
+    }, 3000)
+  }
 
   handleSubmit(e){
     e.preventDefault()
+    console.log(this.userid)
+    const uploading = this.state.files.
+      reduce((bool, nfile) => {
+        if(nfile[1]==true){ bool = true }
+        return bool
+      }, false)
+    if(uploading){
+      this.setError("Images are still uploading")
+      return
+    }else if(!this.state.title || this.state.comparisons.length<1){
+      this.setError("You need a title and at least one question!")
+      return
+    }else if(this.state.files.length<3){
+      this.setError("You should upload at least 3 images")
+      return
+    }else if(this.userid==""){
+      alert("Unknown error, try refreshing the page")
+      return
+    }
     let data = {
-      ownerId: "5904ffed92d85439221abf0c",
+      ownerId: this.userid,
+      ownerHash: this.userhash,
       title: this.state.title,
       subtitle: this.state.comparisons,
+      categories: this.state.categories,
       images: this.state.files.map(file => file[2])
     }
     fetch("/collections", {
@@ -148,7 +199,7 @@ export default class Collections extends Component {
           <div key={index}>
             <input type="text" value={string} onChange={this.setComparison.bind(this, index)} />
             { index>0 &&
-              <Button bsSize="small" className="worst" onClick={this.removeComparison.bind(this, index)}>Remove</Button>
+              <Button tabIndex="-1" bsSize="small" className="worst" onClick={this.removeComparison.bind(this, index)}>Remove</Button>
             }
           </div>
         )
@@ -156,6 +207,7 @@ export default class Collections extends Component {
 
     let dropzoneRef
     console.log(this.state)
+    console.log(this)
 
     return(
       <Dropzone
@@ -171,6 +223,7 @@ export default class Collections extends Component {
         <div className="container">
           <h2>Let's create a new collection!</h2>
           <hr />
+          { this.state.error && <div className="error-flash"><h3>{this.state.error}</h3></div>}
           { dropzoneActive && <div style={overlayStyle}>Drop images...</div> }
           <form onSubmit={this.handleSubmit}>
             <div className="singleField">
@@ -180,7 +233,7 @@ export default class Collections extends Component {
             <div className="singleField">
               <label>Comparison questions</label>
               {this.state.comparisons.length<10 && 
-                <Button className="add" bsSize="small" onClick={this.addComparison.bind(this)}>Add</Button>
+                <Button tabIndex="-1" className="add" bsSize="small" onClick={this.addComparison.bind(this)}>Add</Button>
               }
               <div>
                 { comparisons }

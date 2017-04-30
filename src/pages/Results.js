@@ -24,13 +24,13 @@ export default class Results extends Component {
         }
       },
       average: (a,b) => {
-        const avga = a.rating.reduce((total, next) => total+=next, 0)/a.rating.length
-        const avgb = b.rating.reduce((total, next) => total+=next, 0)/b.rating.length
+        const avga = a.rating.rating.reduce((total, next) => total+=next, 0)/a.rating.rating.length
+        const avgb = b.rating.rating.reduce((total, next) => total+=next, 0)/b.rating.rating.length
         return this.state.descending * ( avga < avgb ? 1 : -1)
       },
       one: (a,b) => {
         const index = this.state.selectedQuestion
-        return this.state.descending * (a.rating[index] < b.rating[index] ? 1 : -1)
+        return this.state.descending * (a.rating.rating[index] < b.rating.rating[index] ? 1 : -1)
       }
     }
   }
@@ -40,25 +40,17 @@ export default class Results extends Component {
   }
 
   componentDidMount(){
-    setTimeout(function(){
-      this.setState({
-        title: "Dota 2 heroes",
-        questions: [
-          "Which one is better?",
-          "Which one wins 1v1 mid?",
-          "Which have would you prefer to random?",
-        ],
-        selectedQuestion: -1,
-        images: [
-          {url:"/images/uploads/Invoker_icon.png", rating: [1200,1300,1600] },
-          {url:"/images/uploads/Meepo_icon.png", rating: [2200,1900,1000] },
-          {url:"/images/uploads/Phantom_Assassin_icon.png", rating: [1400,100,1200] },
-          {url:"/images/uploads/Phoenix.png", rating: [1600, 1899, 999] }
-        ],
-        fetched: true 
+    fetch("/collections/"+this.props.match.params.slug)
+      .then(res => res.json())
+      .then(data => {
+        this.setState({ 
+          title: data.title,
+          questions: data.subtitle,
+          images: data.images,
+          selectedQuestion: -1,
+          fetched: true
+        })
       })
-    }.bind(this), 1000)
-    //fetch( this.props.match.params.slug )
   }
 
   setQuestion(index){
@@ -91,7 +83,7 @@ export default class Results extends Component {
         >{ question }</MenuItem>
       )
     })
-
+    console.log(this.state)
     return (
       <div className="results-page">
         <NavBar />

@@ -2,12 +2,8 @@ import React, { Component } from 'react'
 import { Navbar, Nav, NavDropdown, NavItem, MenuItem } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 
-export default class ImageContainer extends Component{
+export default class NavBar extends Component{
   constuctor(props){
-  }
-
-  clickHandler(){
-    this.props.onClick(this.props.index)
   }
 
   render(){
@@ -30,10 +26,9 @@ export default class ImageContainer extends Component{
               </LinkContainer>
             </Nav>
             <Nav pullRight>
-              <NavDropdown eventKey={1} title="Account" id="basic-nav-dropdown">
-                <MenuItem eventKey={1.1}>My page</MenuItem>
-                <MenuItem eventKey={1.2}>Logout</MenuItem>
-              </NavDropdown>
+              <LinkContainer exact to="/account/">
+                <NavItem eventKey={1}>Account</NavItem>
+              </LinkContainer>
             </Nav>
           </Navbar.Collapse>
         </Navbar>

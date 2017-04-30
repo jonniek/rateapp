@@ -14,8 +14,18 @@ export default class Collections extends Component {
       selectedImages: [0, 1],
       fetched: false,
     }
-    console.log(props)
     this.setWinner = this.setWinner.bind(this)
+  }
+
+  nextImages(array){
+    const imagecount = array.length
+    const image1 = Math.floor(Math.random() * (imagecount ))
+    let image2tmp = Math.floor(Math.random() * (imagecount ))
+    while(image2tmp===image1 && imagecount>1){
+      image2tmp = Math.floor(Math.random() * (imagecount ))
+    }
+    const image2 = image2tmp
+    return [image1, image2]
   }
 
   setWinner(winnerIndex){
@@ -26,50 +36,26 @@ export default class Collections extends Component {
     //fetch(`/collections/${collectionId}?w=${winnerId}&l=${loserId}`)
 
     // initialize our next images
-    const imagecount = this.state.images.length
-    const image1 = Math.floor(Math.random() * (imagecount ))
-    let image2tmp = Math.floor(Math.random() * (imagecount ))
-    while(image2tmp===image1 && imagecount>1){
-      image2tmp = Math.floor(Math.random() * (imagecount ))
-    }
-    const image2 = image2tmp
-    console.log(image1, image2)
+    const newImages = this.nextImages(this.state.images)
     // initialize our next question
     const current = this.state.currentQuestion
     const len = this.state.questions.length
     const nextQuestion = current!==len-1 ? current+1 : 0
 
     // set our next state
-    this.setState({ selectedImages:[image1, image2], currentQuestion: nextQuestion })
+    this.setState({ selectedImages:newImages, currentQuestion: nextQuestion })
   }
 
   componentDidMount() {
-    /*setTimeout(function(){
-      this.setState({
-        title: "Dota 2 heroes",
-        questions: [
-          "Which one is better?",
-          "Which one wins 1v1 mid?",
-          "Which have would you prefer to random?",
-        ],
-        currentQuestion: 0,
-        selectedImages: [0, 1],
-        images: [
-          {url:"/images/uploads/Invoker_icon.png"},
-          {url:"/images/uploads/Meepo_icon.png"},
-          {url:"/images/uploads/Phantom_Assassin_icon.png"},
-          {url:"/images/uploads/Phoenix.png"}
-        ],
-        fetched: true 
-      })
-    }.bind(this), 1000) */
     fetch("/collections/"+this.props.match.params.slug)
       .then(res => res.json())
       .then(data => {
+        const nextImages = this.nextImages(data.images)
         this.setState({ 
           title: data.title,
           questions: data.subtitle,
           images: data.images,
+          selectedImages: nextImages,
           fetched: true
         })
       })
