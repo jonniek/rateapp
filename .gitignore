@@ -4,6 +4,9 @@
 /client/node_modules
 /node_modules
 
+#build directory
+/public
+
 # testing
 /client/coverage
 
@@ -16,4 +19,4 @@
 /client/.npm-debug.log*
 /client/yarn-debug.log*
 /client/yarn-error.log*
-
+/npm-debug.log*
