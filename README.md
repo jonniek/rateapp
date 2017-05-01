@@ -2,15 +2,18 @@
 # RateApp
 Create collections of images and criteria that images will be ranked by. Users will vote between 2 random images which one matches the criteria better. This way the collection will get ranked in crowdsourced order.
 
+### Requirements
+You need mongoDB installed for the database. [Install guide](https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-16-04)
+
 ### Getting started
-There are two parts, the server and the client. The server is the root of the project and create-react-app client is inside client/ directory. Both need to be npm installed after cloning. Be aware of which directory you run your npm scripts from, building should be done from root only as it moves the builded files into public folder.  
+There are two parts, the server and the client. The server is the root of the project and create-react-app client is inside client/ directory. Both need to be npm installed after cloning. Be aware of which directory you run your npm scripts from, building should be done from root only as it moves the builded files into public folder. Setup and build scripts require unix commands, for windows create your own or perform the installs/moving of files manually.
   
 Download:
 ```
-git clone git@github.com:donmaiq/rateapp.git
+git clone https://github.com/donmaiq/rateapp.git
 cd rateapp
 ```
-Install with script:
+Install with npm script:
 ```
 npm run setup
 ```
