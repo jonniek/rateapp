@@ -26,7 +26,6 @@ var allowCrossDomain = function(req, res, next) {
 }
 
 var path = require('path');
-app.use(allowCrossDomain)
 app.use(bodyParser.urlencoded({ extended: false }))
 app.use(bodyParser.json())
 
@@ -34,6 +33,17 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', function(req, res){
 	res.serveFile(path.join(__dirname, 'public', 'index.html'))
+})
+
+app.put('/api/collections/:collid/rating', function(req, res){
+	var b = req.body
+	if(!b.winner || !b.loser || !b.question) { res.status=404;res.json({error:"invalid parameters"}); return}
+	Rating.calculateRating(b.winner, b.loser, b.question, function(err, response){
+		if (err) throw err;
+		Collection.incrementVotesbyUrl(req.params.collid, function(err, r){if(err)throw err;})
+		res.json({status: "sent"})
+	})
+
 })
 
 app.post('/api/users', function(req, res){
@@ -75,7 +85,6 @@ app.get('/api/users/:collection/collections', function(req, res){
 app.get('/api/collections', function(req, res){
 	Collection.getAllCollections(function(err, response){
 		if(err) throw err;
-		console.log(response)
 		res.json(response)
 	})
 })

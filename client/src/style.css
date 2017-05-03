@@ -38,8 +38,13 @@ hr{
   justify-content: space-around;
 }
 .result-image{
-  margin:10px 0;
+  margin:10px;
   position: relative;
+}
+.result-image img{
+  max-height: 400px;
+  height: auto;
+  width: 100%;
 }
 .order-num{
   position: absolute;
@@ -54,6 +59,17 @@ hr{
 /*Create styles*/
 .singleField{
   margin-bottom: 10px;
+}
+.input-tip{
+  margin-left: 10px;
+}
+.terms{
+  vertical-align: top;
+  position: relative;
+  top: 3px;
+}
+.fakelink{
+  cursor:pointer;
 }
 .add{
   margin-bottom: 5px;
@@ -89,6 +105,12 @@ img.preview.loading{
   top: -45px;
   transition: 0.2s opacity;
 }
+@media (max-width:999px) {
+  .previewDelete{
+    opacity: 1;
+  }
+}
+
 img.preview:hover + .previewDelete, .previewDelete:hover{
   opacity: 1;
 }

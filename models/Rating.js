@@ -18,20 +18,6 @@ module.exports.getRatingbyId= function(id,callback){
   Rating.findById(id, callback)
 }
 
-module.exports.updateRating = function(id, index, value, callback){
-  Rating.findById(id, function(err, rating){
-  	if(err)throw err;
-  	if(index==0){
-  		rating.rating0 = value
-  	}else if(index==1){
-  		rating.rating1 = value
-  	}else{
-  		rating.rating2 = value
-  	}
-  	rating.save(callback)
-  })
-}
-
 module.exports.calculateRating = function(a, b, id, callback){
   Rating.findById(a,  function(err, imageA){
     if (err) throw err
@@ -39,7 +25,7 @@ module.exports.calculateRating = function(a, b, id, callback){
     	if (err) throw err
     	var newArating, newBrating;
 
-    	console.log(imageA.rating[id],imageB.rating[id]);
+    	//console.log(imageA.rating[id],imageB.rating[id]);
 
     	var expectedScoreA = elo.getExpected(imageA.rating[id], imageB.rating[id])
 		  var expectedScoreB = elo.getExpected(imageB.rating[id], imageA.rating[id])
@@ -50,7 +36,7 @@ module.exports.calculateRating = function(a, b, id, callback){
     	imageA.rating[id] = newArating
     	imageB.rating[id] = newBrating
 	    imageA.markModified('rating');
-    	console.log(imageA.rating[id],imageB.rating[id])
+    	//console.log(imageA.rating[id],imageB.rating[id])
     	imageA.save(function(err){
         if (err) throw err
 		    imageB.markModified('rating');

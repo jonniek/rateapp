@@ -13,6 +13,8 @@ export default class Collections extends Component {
       files: [],
       error: "",
       dropzoneActive: false,
+      terms: false,
+      termsAccepted: false,
     }
     this.handleSubmit = this.handleSubmit.bind(this)
   }
@@ -106,6 +108,8 @@ export default class Collections extends Component {
     if(target==="categories"){
       object[target] = e.target.value.toLowerCase().replace(/\s+/g,' ').trim().split(" ")
         .reduce( (res, next) => { if(!res.includes(next)){res.push(next)} return res } , [] )
+    }else if(target==="termsAccepted"){
+      this.setState({termsAccepted: e.target.checked })
     }else{
       object[target] = e.target.value
     }
@@ -153,6 +157,9 @@ export default class Collections extends Component {
     }else if(this.state.files.length<3){
       this.setError("You should upload at least 3 images")
       return
+    }else if(!this.state.termsAccepted){
+      this.setError("You need to accept the terms")
+      return
     }else if(this.userid==""){
       alert("Unknown error, try refreshing the page")
       return
@@ -176,7 +183,12 @@ export default class Collections extends Component {
     .then( res => {
       this.props.history.push('/collections/'+res.url)
     })
-  } 
+  }
+
+  toggleTerms(){
+    console.log("click")
+    this.setState({terms: !this.state.terms})
+  }
 
   render() {
     const { files, dropzoneActive } = this.state
@@ -197,7 +209,12 @@ export default class Collections extends Component {
       .map( (string, index) => {
         return(
           <div key={index}>
-            <input type="text" value={string} onChange={this.setComparison.bind(this, index)} />
+            <input
+              type="text"
+              value={string}
+              onChange={this.setComparison.bind(this, index)}
+              placeholder={index==0?"ex. Which one is more X?":""}
+            />
             { index>0 &&
               <Button tabIndex="-1" bsSize="small" className="worst" onClick={this.removeComparison.bind(this, index)}>Remove</Button>
             }
@@ -228,7 +245,7 @@ export default class Collections extends Component {
           <form onSubmit={this.handleSubmit}>
             <div className="singleField">
               <label htmlFor="title">Title</label><br />
-              <input id="title" type="text" onChange={this.setField.bind(this, "title")}/>
+              <input id="title" type="text" placeholder="ex. Male actors" onChange={this.setField.bind(this, "title")}/>
             </div>
             <div className="singleField">
               <label>Comparison questions</label>
@@ -241,13 +258,26 @@ export default class Collections extends Component {
             </div>
             <div className="singleField">
               <label htmlFor="categories">Categories, separated by space</label><br />
-              <input id="categories" type="text" onChange={this.setField.bind(this, "categories")}/>
+              <input id="categories" type="text" placeholder="ex. games characters" onChange={this.setField.bind(this, "categories")}/>
             </div>
-
-            <p>Drag and drop images or press button below</p>
+            <label for="terms">Terms and conditions</label><br/>
+            <input type="checkbox" id="terms" onChange={this.setField.bind(this,"termsAccepted")}/>
+            <span className="input-tip terms">
+              I have read and agree to the
+                <a className="input-tip fakelink" onClick={this.toggleTerms.bind(this)}>Terms and conditions</a>
+            </span>
+            {this.state.terms &&
+              <ul>
+                <li>We reserve the right to remove anything or stop service without notice or reason</li>
+                <li>Do not upload illegal, copyrighted, offensive, libelous or defamatory images</li>
+                <li>That's about it</li>
+              </ul>
+            }<br/>
+            <label>Files</label><br/>
             <Button onClick={() => { dropzoneRef.open() }}>
-              Upload files
+              Upload Images
             </Button>
+            <span className="input-tip">or Drag and drop images!</span>
             <div className="preview-container">
               {
                 files.map((f, index)=> {

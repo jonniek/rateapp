@@ -83,7 +83,7 @@ export default class Collections extends Component {
             </Link>
             <div className="card-info">
               <h3><Link to={item.url}>{item.title}</Link></h3>
-              <div>Stars: {item.stars}</div>
+              <div>Votes: {item.votes}</div>
               <div>Categories: {item.categories.map( (cat,i) => {
                   return(
                     <span

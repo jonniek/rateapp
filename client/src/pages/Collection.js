@@ -31,9 +31,21 @@ export default class Collections extends Component {
   setWinner(winnerIndex){
     // TODO update result to server
     //const loserIndex = winnerIndex ? 0 : 1
-    //const winnerId = this.state.images[this.state.selectedImages[winnerIndex]]
-    //const loserId = this.state.images[this.state.selectedImages[loserId]]
-    //fetch(`/collections/${collectionId}?w=${winnerId}&l=${loserId}`)
+    const winner = this.state.images[this.state.selectedImages[winnerIndex]]
+    const loser = this.state.images[this.state.selectedImages[winnerIndex===1?0:1]]
+    console.log(winner)
+    fetch("/api/collections/"+this.props.match.params.slug+"/rating", {
+      method: "PUT",
+      headers:{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({
+        winner: winner.rating._id,
+        loser: loser.rating._id,
+        question: this.state.currentQuestion,
+      })
+    })
 
     // initialize our next images
     const newImages = this.nextImages(this.state.images)
