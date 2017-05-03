@@ -2,6 +2,16 @@
 # RateApp
 Create collections of images and criteria that images will be ranked by. Users will vote between 2 random images which one matches the criteria better. This way the collection will get ranked in a crowdsourced order.
 
+### Note
+This is a work in progress and has a lot of bad practice placeholders such as [authentication](https://github.com/donmaiq/rateapp/blob/master/client/src/pages/Create.js#L35). Use with caution. List of incomplete features:
+  - proper authentication
+  - secure backend(check client data, authentication, cors-stuff maybe?)
+  - React component structure
+  - user page, allow claiming of generated account with username and password.
+  - starring collections
+  - editing/deleting collections. Adding more options like shared ownership, private collection(url only) etc
+  - unit tests
+
 ### Requirements
 You need mongoDB installed for the database. [Install guide](https://www.digitalocean.com/community/tutorials/how-to-install-mongodb-on-ubuntu-16-04)  
 You will also probably need npm, node and git.
