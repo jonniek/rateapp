@@ -64,9 +64,9 @@ export default class Collections extends Component {
 
   render() {
     const collections = this.state.collections
-      .filter( item => item.title.includes(this.state.search) || item.categories
+      .filter( item => item.title.toLowerCase().includes(this.state.search.toLowerCase()) || item.categories
         .reduce( (found, next) => {
-          if(!found && next.includes(this.state.search)) return true
+          if(!found && next.toLowerCase().includes(this.state.search.toLowerCase())) return true
           return found
         }, false)
       )

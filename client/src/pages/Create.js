@@ -161,7 +161,7 @@ export default class Collections extends Component {
       ownerId: this.userid,
       ownerHash: this.userhash,
       title: this.state.title,
-      subtitle: this.state.comparisons,
+      subtitle: this.state.comparisons.filter( string => string!==""),
       categories: this.state.categories,
       images: this.state.files.map(file => file[2])
     }
