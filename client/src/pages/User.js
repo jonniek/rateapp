@@ -9,13 +9,19 @@ export default class Account extends Component {
     }
   }
   componentDidMount(){
-    fetch('/api/users/'+this.props.match.params.slug)
-      .then(res => res.json())
-      .then(data => {
-        this.setState({
-          username: data.username,
-        })
+    if(this.props.location.user){
+      this.setState({
+        username: this.props.location.user
       })
+    }else{
+      fetch('/api/users/'+this.props.match.params.slug)
+        .then(res => res.json())
+        .then(data => {
+          this.setState({
+            username: data.username,
+          })
+        })
+    }
   }
   render(){
     const name = this.state.username?this.state.username:"_______"

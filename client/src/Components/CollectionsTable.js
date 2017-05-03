@@ -93,7 +93,7 @@ export default class Collections extends Component {
                 )})}
               </div>
               <div>Creator: 
-                <Link to={`/users/${item.ownerId._id}`} >
+                <Link to={{ pathname: `/users/${item.ownerId._id}`, user: item.ownerId.username }}>
                   { " "+item.ownerId.username }
                 </Link>
               </div>
