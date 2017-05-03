@@ -75,6 +75,7 @@ export default class Collections extends Component {
         return(
           <div key={index} className="collection-card">
             <Link to={item.url}>
+              <div className="loader cardloader">Loading...</div>
               <div
                 className="card-image"
                 style={{ background: `url(${item.image}) no-repeat scroll center`}}>
