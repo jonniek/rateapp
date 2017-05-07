@@ -28,12 +28,24 @@ export default class Collections extends Component {
     return [image1, image2]
   }
 
+  nextQuestion(questions){
+    const current = this.state.currentQuestion
+    const len = questions.length
+    let next = current
+    if(len>1){
+      next = Math.floor(Math.random() * len)
+      while(current===next){
+        next = Math.floor(Math.random() * len)
+      }
+    }
+    return next
+  }
+
   setWinner(winnerIndex){
     // TODO update result to server
     //const loserIndex = winnerIndex ? 0 : 1
     const winner = this.state.images[this.state.selectedImages[winnerIndex]]
     const loser = this.state.images[this.state.selectedImages[winnerIndex===1?0:1]]
-    console.log(winner)
     fetch("/api/collections/"+this.props.match.params.slug+"/rating", {
       method: "PUT",
       headers:{
@@ -50,9 +62,8 @@ export default class Collections extends Component {
     // initialize our next images
     const newImages = this.nextImages(this.state.images)
     // initialize our next question
-    const current = this.state.currentQuestion
-    const len = this.state.questions.length
-    const nextQuestion = current!==len-1 ? current+1 : 0
+    
+    const nextQuestion = this.nextQuestion(this.state.questions)
 
     // set our next state
     this.setState({ selectedImages:newImages, currentQuestion: nextQuestion })
@@ -63,11 +74,13 @@ export default class Collections extends Component {
       .then(res => res.json())
       .then(data => {
         const nextImages = this.nextImages(data.images)
+        const nextQuestion = this.nextQuestion(data.subtitle)
         this.setState({ 
           title: data.title,
           questions: data.subtitle,
           images: data.images,
           selectedImages: nextImages,
+          currentQuestion: nextQuestion,
           fetched: true
         })
       })

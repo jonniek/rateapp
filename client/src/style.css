@@ -1,5 +1,7 @@
+@import url('https://fonts.googleapis.com/css?family=Quicksand');
 body {
-  margin: 0 0 35px 0;
+  font-family: 'Quicksand', sans-serif!important;
+  font-size: 16px;
   padding: 0;
   font-family: sans-serif;
   background-color: #e3dfd1;
@@ -148,13 +150,25 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
 .card-info h3{
   font-size: 18px;
 }
+.card-info .table {
+  text-align:left;
+}
+.card-info .table > div{
+  display:table-row;
+}
+.card-info .table > div > span{
+  display:table-cell;
+  padding-left: 20px;
+}
 .sort-container{
   margin:10px 50px;
 }
 .cat{
-  margin-left: 5px;
   cursor:pointer;
   color:#337ab7;
+}
+.cat:not(:first-child){
+  margin-left: 5px;
 }
 .cat:hover{
   color:#23527c;
@@ -166,12 +180,13 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
   float:right;
 }
 .search-x{
+  font-family: sans-serif!important;
   font-weight: bold;
   font-size: 20px;
   color: rgba(255,100,100,0.8);
   position: absolute;
   right: 5px;
-  top: -5px;
+  top: -4px;
   padding: 5px;
   cursor:pointer;
 }
@@ -184,8 +199,8 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
 .collections .btn-toolbar .btn {
   float:right;
 }
-.collections .createnew span{
-  vertical-align: middle;
+.collections .createnew:hover{
+  filter: brightness(110%);
 }
 
 /*Collection styles*/
@@ -257,6 +272,9 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
 .btn-sm, .btn-group-sm > .btn{
   padding: 5px 10px!important;
 }
+.btn{
+  font-size: 15px!important;
+}
 .btn-default:active{
   box-shadow: 0 2px #668241!important;
   top: 2px!important;
@@ -277,7 +295,7 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
   border:none!important;
 }
 .dropdown-menu li a{
-  color:#8fb55e!important;
+  color:#668241!important;
 }
 .dropdown-menu li.active a{
   background-image: none!important;

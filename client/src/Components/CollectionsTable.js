@@ -83,20 +83,24 @@ export default class Collections extends Component {
             </Link>
             <div className="card-info">
               <h3><Link to={item.url}>{item.title}</Link></h3>
-              <div>Votes: {item.votes}</div>
-              <div>Categories: {item.categories.map( (cat,i) => {
-                  return(
-                    <span
-                      onClick={this.setSearch.bind(this, cat)}
-                      key={i}
-                      className="cat"
-                    >{cat}</span>
-                )})}
-              </div>
-              <div>Creator: 
-                <Link to={{ pathname: `/users/${item.ownerId._id}`, user: item.ownerId.username }}>
-                  { " "+item.ownerId.username }
-                </Link>
+              <div className="table">
+                <div><span>Votes:</span><span>{item.votes}</span></div>
+                <div><span>Categories:</span><span>{item.categories.map( (cat,i) => {
+                    return(
+                      <span
+                        onClick={this.setSearch.bind(this, cat)}
+                        key={i}
+                        className="cat"
+                      >{cat}</span>
+                  )})}
+                  </span>
+                </div>
+                <div><span>Creator:</span>
+                  <span><Link to={{ pathname: `/users/${item.ownerId._id}`, user: item.ownerId.username }}>
+                      { item.ownerId.username }
+                    </Link>
+                  </span>
+                </div>
               </div>
             </div>
           </div>
