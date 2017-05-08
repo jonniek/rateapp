@@ -247,7 +247,7 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
   background-image: none!important;
   background-color: #8fb55e!important;
   color:#fff!important;
-  border-radius: 0!important;
+  border-radius: 1px!important;
   padding: 10px 20px!important;
   position: relative!important;
   margin-top:5px;
