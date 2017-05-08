@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { NavBar, CollectionsTable } from '../Components/'
+import { getUser } from '../utils/'
 
 export default class Account extends Component {
   constructor(){
@@ -14,8 +15,7 @@ export default class Account extends Component {
         username: this.props.location.user
       })
     }else{
-      fetch('/api/users/'+this.props.match.params.slug)
-        .then(res => res.json())
+      getUser(this.props.match.params.slug)
         .then(data => {
           this.setState({
             username: data.username,

@@ -34,7 +34,7 @@ module.exports.getUserbyUsername = function(username,callback){
 }
 
 module.exports.getUserbyId = function(id,callback){
-  User.findById(id).select({'username':1}).exec(callback)
+  User.findById(id).select({'username':1, 'stars':1}).exec(callback)
 }
 
 module.exports.checkPassOfUser = function(hash, id, callback){

@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { Star } from '../Components'
 //import { LinkContainer } from 'react-router-bootstrap'
 import { ButtonToolbar, DropdownButton, MenuItem, Button } from 'react-bootstrap'
+import { createUser, getUser } from '../utils/'
 
 export default class Collections extends Component {
 
@@ -17,35 +18,41 @@ export default class Collections extends Component {
       fetched: false,
       sort_descending: 1,
       sort: 'stars',
+      userStars: [],
       search: "",
     }
   }
 
   componentDidMount() {
-    let fetchstring = "/api/collections"
-    if(this.props.user){
-      fetchstring=`/api/users/${this.props.user}/collections`
-    }
-    fetch(fetchstring)
-      .then(res => res.json())
-      .then(data => {
-        data.forEach(field => {
-          field.url = "/collections/"+field.url
-          field.categories = field.categories || []
-          if(field.images.length>0){
-            field.image = 
-              field.images[Math.floor(Math.random() * field.images.length)].url
-            delete field.images
-          }else{
-            delete field.images
-            field.image = require('../../public/images/noimage.png')
-          }
+    createUser().then( (id) => getUser(id)).then( user => {
+      const stars = user.stars || []
+
+      let fetchstring = "/api/collections"
+      if(this.props.user){
+        fetchstring=`/api/users/${this.props.user}/collections`
+      }
+      fetch(fetchstring)
+        .then(res => res.json())
+        .then(data => {
+          data.forEach(field => {
+            field.url = "/collections/"+field.url
+            field.categories = field.categories || []
+            if(field.images.length>0){
+              field.image = 
+                field.images[Math.floor(Math.random() * field.images.length)].url
+              delete field.images
+            }else{
+              delete field.images
+              field.image = require('../../public/images/noimage.png')
+            }
+          })
+          this.setState({
+            collections: data,
+            userStars: stars,
+            fetched: true
+          })
         })
-        this.setState({
-          collections: data,
-          fetched: true
-        })
-      })
+    })
   }
 
   setSearch(event){
@@ -71,9 +78,9 @@ export default class Collections extends Component {
       )
       .sort(this.sort_functions[this.state.sort].bind(this))
       .map( (item, index) => {
-        console.log(item)
+        const starred = this.state.userStars.indexOf(item._id)!==-1?true:false
         return(
-          <div key={index} className="collection-card">
+          <div key={item._id} className="collection-card">
             <Link to={item.url}>
               <div className="loader cardloader">Loading...</div>
               <div
@@ -83,7 +90,13 @@ export default class Collections extends Component {
             </Link>
             <div className="card-info">
               <h3><Link to={item.url}>{item.title}</Link></h3>
-              <Star starid={item._id} stared={false} stars={item.stars}/>
+              <Star
+                starid={item._id}
+                starred={starred}
+                stars={item.stars}
+                userid={localStorage.getItem("userid")}
+                userhash={localStorage.getItem("userhash")}
+              />
               <div className="table">
                 <div><span>Votes:</span><span>{item.votes}</span></div>
                 <div><span>Categories:</span><span>{item.categories.map( (cat,i) => {
@@ -107,7 +120,7 @@ export default class Collections extends Component {
           </div>
         )
       })
-    
+    console.log(this.state)
     return (
       <div className="collection-table">
         { this.state.collections.length === 0 && !this.state.fetched && <h2><div className="loader">Loading...</div></h2>}

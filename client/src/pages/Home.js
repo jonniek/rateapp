@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { NavBar } from '../Components/'
 import { Link } from 'react-router-dom'
 import { Grid, Col, Row } from 'react-bootstrap'
+import { createUser } from '../utils/'
 
 export default class Home extends Component {
   constructor(){
@@ -18,6 +19,10 @@ export default class Home extends Component {
     .then( data => {
       this.props.history.push('/collections/'+data.url)
     })
+  }
+
+  componentDidMount(){
+    createUser()
   }
 
   render() {
