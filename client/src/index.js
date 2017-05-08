@@ -1,5 +1,5 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from 'react'
+import ReactDOM from 'react-dom'
 
 import { HashRouter as Router, Route, Switch } from 'react-router-dom'
 
@@ -12,7 +12,7 @@ import {
   Create,
   Account,
   User,
-} from './pages/';
+} from './pages/'
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap/dist/css/bootstrap-theme.css'
