@@ -34,3 +34,13 @@ export function getUser(id){
       })
   })
 }
+
+export function getUserDeep(id){
+  return new Promise(resolve =>{
+    fetch('/api/users/'+id+'/deep')
+      .then(res => res.json())
+      .then(data => {
+        resolve(data)
+      })
+  })
+}

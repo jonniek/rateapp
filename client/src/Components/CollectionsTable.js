@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
 import { Star } from '../Components'
 //import { LinkContainer } from 'react-router-bootstrap'
-import { ButtonToolbar, DropdownButton, MenuItem, Button } from 'react-bootstrap'
+import { ButtonToolbar, DropdownButton, MenuItem, Button, Clearfix } from 'react-bootstrap'
 import { createUser, getUser } from '../utils/'
 
 export default class Collections extends Component {
@@ -21,37 +21,48 @@ export default class Collections extends Component {
       userStars: [],
       search: "",
     }
+    this.hideCreate = props.hideCreate || false
+    this.useCollection = props.collections || false
   }
 
   componentDidMount() {
     createUser().then( (id) => getUser(id)).then( user => {
       const stars = user.stars || []
 
-      let fetchstring = "/api/collections"
-      if(this.props.user){
-        fetchstring=`/api/users/${this.props.user}/collections`
+      if(this.useCollection===false){
+        const fetchstring = !this.props.user ? "/api/collections" : `/api/users/${this.props.user}/collections`
+        fetch(fetchstring)
+          .then(res => res.json())
+          .then(data => {
+            this.parseCollection(data, stars)
+          })
+      }else{
+        this.parseCollection(this.useCollection, stars)
       }
-      fetch(fetchstring)
-        .then(res => res.json())
-        .then(data => {
-          data.forEach(field => {
-            field.url = "/collections/"+field.url
-            field.categories = field.categories || []
-            if(field.images.length>0){
-              field.image = 
-                field.images[Math.floor(Math.random() * field.images.length)].url
-              delete field.images
-            }else{
-              delete field.images
-              field.image = require('../../public/images/noimage.png')
-            }
-          })
-          this.setState({
-            collections: data,
-            userStars: stars,
-            fetched: true
-          })
-        })
+    })
+  }
+
+  parseCollection(data, stars){
+    if(!data || !data.length){
+      data = []
+    }else{
+      data.forEach(field => {
+        field.url = "/collections/"+field.url
+        field.categories = field.categories || []
+        if(field.images.length>0){
+          field.image = 
+            field.images[Math.floor(Math.random() * field.images.length)].url
+          delete field.images
+        }else{
+          delete field.images
+          field.image = require('../../public/images/noimage.png')
+        }
+      })
+    }
+    this.setState({
+      collections: data,
+      userStars: stars,
+      fetched: true
     })
   }
 
@@ -123,19 +134,24 @@ export default class Collections extends Component {
     console.log(this.state)
     return (
       <div className="collection-table">
-        { this.state.collections.length === 0 && !this.state.fetched && <h2><div className="loader">Loading...</div></h2>}
-        { this.state.collections.length === 0 && this.state.fetched && <h2>404 no collections found</h2>}
-        { this.state.collections.length !== 0 &&
-          <div className="container">
+        <div className="container">
+          <div>
+            <h2>{this.props.title || "Collections" }</h2>
+            { this.state.collections.length === 0 && 
+              !this.state.fetched && <h2><div className="loader">Loading...</div></h2>
+            }
+            { this.state.collections.length === 0 && this.state.fetched && <h3>no collections found</h3>}
+            { this.state.collections.length !== 0 &&
             <div>
-              <h2>Collections</h2>
               <hr />
               <ButtonToolbar>
 
-                <Link className="createnew" to="/collections/create">
-                  <img alt="create new" height="50" width="50" src={require('../../public/images/plus.png')} />
-                  <span>Create!</span>
-                </Link>
+                {!this.hideCreate &&
+                  <Link className="createnew" to="/collections/create">
+                    <img alt="create new" height="50" width="50" src={require('../../public/images/plus.png')} />
+                    <span>Create!</span>
+                  </Link>
+                }
 
                 <DropdownButton
                   title={`sort by: ${this.state.sort}`}
@@ -152,9 +168,11 @@ export default class Collections extends Component {
                     eventKey="2"
                   >title</MenuItem>
                 </DropdownButton>
+                <Clearfix visibleXsBlock></Clearfix>
                 <Button onClick={this.toggleSortOrder.bind(this)}>
                   {`order: ${this.state.sort_descending===1?'desc':'asc'}`}
                 </Button>
+                <Clearfix visibleXsBlock></Clearfix>
                 <span className="search">
                   <input value={ this.state.search } onChange={this.setSearch.bind(this)} placeholder="search" />
                   {this.state.search && 
@@ -162,14 +180,15 @@ export default class Collections extends Component {
                   }
                 </span>
               </ButtonToolbar>
+              <hr />
+              <div className="collections-container center-children">
+                {collections}
+              </div>
             </div>
-            <hr />
-            <div className="collections-container center-children">
-              {collections}
-            </div>
-          </div>
-        }
+            }
+        </div>
       </div>
+    </div>
     );
   }
 }

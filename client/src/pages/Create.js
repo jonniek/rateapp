@@ -145,7 +145,7 @@ export default class Collections extends Component {
     console.log(this.userid)
     const uploading = this.state.files.
       reduce((bool, nfile) => {
-        if(nfile[1]==true){ bool = true }
+        if(nfile[1]===true){ bool = true }
         return bool
       }, false)
     if(uploading){
@@ -160,7 +160,7 @@ export default class Collections extends Component {
     }else if(!this.state.termsAccepted){
       this.setError("You need to accept the terms")
       return
-    }else if(this.userid==""){
+    }else if(this.userid===""){
       alert("Unknown error, try refreshing the page")
       return
     }
@@ -213,7 +213,7 @@ export default class Collections extends Component {
               type="text"
               value={string}
               onChange={this.setComparison.bind(this, index)}
-              placeholder={index==0?"ex. Which one is more X?":""}
+              placeholder={index===0?"ex. Which one is more X?":""}
             />
             { index>0 &&
               <Button tabIndex="-1" bsSize="small" className="worst" onClick={this.removeComparison.bind(this, index)}>Remove</Button>

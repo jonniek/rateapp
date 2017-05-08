@@ -230,9 +230,35 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
   margin-top:30px;
   user-select: none;
 }
+.comparison-container .row div{
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
+}
 .image-container img{
   max-height: 300px;
+  max-width: 100%;
   width: auto;
+}
+.left-image{
+  text-align: right;
+}
+.divisor h3{
+  margin: 0;
+}
+.right-image{
+  text-align: left;
+}
+@media (max-width:999px) {
+  .right-image, .left-image{
+    text-align: center;
+  }
+  .image-container img{
+    max-height: 
+  }
+  .image-container img{
+    max-height: 45vh;
+  }
 }
 .comparison-container .btn{
   margin-top:30px;

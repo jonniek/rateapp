@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Navbar, Nav, NavDropdown, NavItem, MenuItem } from 'react-bootstrap'
+import { Navbar, Nav, NavItem } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 
 export default class NavBar extends Component{
