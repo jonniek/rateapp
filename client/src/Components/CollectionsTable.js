@@ -32,7 +32,6 @@ export default class Collections extends Component {
         data.forEach(field => {
           field.url = "/collections/"+field.url
           field.categories = field.categories || []
-          field.stars = 0
           if(field.images.length>0){
             field.image = 
               field.images[Math.floor(Math.random() * field.images.length)].url
@@ -72,6 +71,7 @@ export default class Collections extends Component {
       )
       .sort(this.sort_functions[this.state.sort].bind(this))
       .map( (item, index) => {
+        console.log(item)
         return(
           <div key={index} className="collection-card">
             <Link to={item.url}>
@@ -83,7 +83,7 @@ export default class Collections extends Component {
             </Link>
             <div className="card-info">
               <h3><Link to={item.url}>{item.title}</Link></h3>
-              <Star starid={item._id} stared={false} stars={10}/>
+              <Star starid={item._id} stared={false} stars={item.stars}/>
               <div className="table">
                 <div><span>Votes:</span><span>{item.votes}</span></div>
                 <div><span>Categories:</span><span>{item.categories.map( (cat,i) => {

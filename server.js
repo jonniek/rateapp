@@ -66,6 +66,7 @@ app.put('/api/users/:id/stars', function(req, res){
 	}
 	User.addStar(userid, pass, starid, function(err, response){
 		if(err) throw err;
+		Collection.incrementStarsById(starid, function(err, response){if(err)throw err;})
 		res.json({'star':'added'})
 	})
 })
@@ -77,6 +78,7 @@ app.delete('/api/users/:id/stars', function(req, res){
 	var starid = req.body.starid
 	User.removeStar(userid, pass, starid, function(err, response){
 		if(err) throw err;
+		Collection.decrementStarsById(starid, function(err, response){if(err)throw err;})
 		res.json({'star':'removed'})
 	})
 })
