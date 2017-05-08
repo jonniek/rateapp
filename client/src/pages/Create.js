@@ -260,19 +260,21 @@ export default class Collections extends Component {
               <label htmlFor="categories">Categories, separated by space</label><br />
               <input id="categories" type="text" placeholder="ex. games characters" onChange={this.setField.bind(this, "categories")}/>
             </div>
-            <label for="terms">Terms and conditions</label><br/>
-            <input type="checkbox" id="terms" onChange={this.setField.bind(this,"termsAccepted")}/>
-            <span className="input-tip terms">
-              I have read and agree to the
-                <a className="input-tip fakelink" onClick={this.toggleTerms.bind(this)}>Terms and conditions</a>
-            </span>
-            {this.state.terms &&
-              <ul>
-                <li>We reserve the right to remove anything or stop service without notice or reason</li>
-                <li>Do not upload illegal, copyrighted, offensive, libelous or defamatory images</li>
-                <li>That's about it</li>
-              </ul>
-            }<br/>
+            <div className="singleField">
+              <label for="terms">Terms and conditions</label><br/>
+              <input type="checkbox" id="terms" onChange={this.setField.bind(this,"termsAccepted")}/>
+              <span className="input-tip terms">
+                I have read and agree to the
+                  <a className="input-tip fakelink" onClick={this.toggleTerms.bind(this)}>Terms and conditions</a>
+              </span>
+              {this.state.terms &&
+                <ul>
+                  <li>We reserve the right to remove anything or stop service without notice or reason</li>
+                  <li>Do not upload illegal, copyrighted, offensive, libelous or defamatory images</li>
+                  <li>That's about it</li>
+                </ul>
+              }<br/>
+            </div>
             <label>Files</label><br/>
             <Button onClick={() => { dropzoneRef.open() }}>
               Upload Images

@@ -35,6 +35,16 @@ export function getUser(id){
   })
 }
 
+export function getUsers(){
+  return new Promise(resolve => {
+    fetch('/api/users')
+      .then(res => res.json())
+      .then(data => {
+        resolve(data)
+      })
+  })
+}
+
 export function getUserDeep(id){
   return new Promise(resolve =>{
     fetch('/api/users/'+id+'/deep')
@@ -42,5 +52,23 @@ export function getUserDeep(id){
       .then(data => {
         resolve(data)
       })
+  })
+}
+
+export function saveName(newname){
+  return new Promise( resolve => {
+    const id = localStorage.getItem("userid")
+    const hash = localStorage.getItem("userhash")
+    fetch('/api/users/'+id, {
+      method: 'PUT',
+      headers:{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({username: newname, password: hash})
+    }).then( res => res.json())
+    .then( data => {
+      resolve(data.message)
+    })
   })
 }

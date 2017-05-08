@@ -2,13 +2,14 @@ import React, { Component } from 'react'
 import { NavBar } from '../Components/'
 import { Link } from 'react-router-dom'
 import { Grid, Col, Row } from 'react-bootstrap'
-import { createUser } from '../utils/'
+import { createUser, getUsers } from '../utils/'
 
 export default class Home extends Component {
   constructor(){
     super()
     this.state = {
       randoming: false,
+      users: [],
     }
   }
 
@@ -23,6 +24,10 @@ export default class Home extends Component {
 
   componentDidMount(){
     createUser()
+    getUsers().then(users => {
+      console.log(users)
+      this.setState({ users })
+    })
   }
 
   render() {
@@ -32,6 +37,7 @@ export default class Home extends Component {
         <h2>Welcome to RateApp!</h2>
         <div className="intro center-children">
           <p>Rateapp is a fun way to rank images into a certain order</p>
+          <p>Users created: { this.state.users.length ? this.state.users.length : "..." } !</p>
         </div>
         { this.state.randoming && <h2><div className="loader">Loading...</div></h2> ||
           <Grid>

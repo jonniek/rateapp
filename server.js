@@ -51,8 +51,29 @@ app.put('/api/collections/:collid/rating', function(req, res){
 
 app.post('/api/users', function(req, res){
 	User.createUser(new User({stars:[],collections:[]}), function(err, response){
+		if(err) throw err;
 		res.json(response)
 	})
+})
+app.get('/api/users', function(req, res){
+	User.getAllUsers(function(err, response){
+		if(err) throw err;
+		res.json(response)
+	})
+})
+
+app.put('/api/users/:id', function(req, res){
+	var id = req.params.id
+	var hash = req.body.password
+	var name = req.body.username
+	if(!id || !hash || !name){
+		res.json({message:"Failed, try another name"})
+	}else{
+		User.updateUsername(id, hash, name, function(err, response){
+			if(err) throw err;
+			res.json({message:"Success!"})
+		})
+	}
 })
 
 app.put('/api/users/:id/stars', function(req, res){
@@ -109,6 +130,7 @@ app.get('/api/users/:id', function(req, res){
 
 app.get('/api/users/:id/deep', function(req, res){
 	User.getStarredCollectionsById(req.params.id, function(err, response){
+		if(err) throw err;
 		res.json(response)
 	})
 })
@@ -116,6 +138,7 @@ app.get('/api/users/:id/deep', function(req, res){
 app.get('/api/users/:collection/collections', function(req, res){
 	var target = req.params.collection
 	Collection.getCollectionsbyOwner(target, function(err, response){
+		if(err) throw err;
 		res.json(response)
 	})
 })
