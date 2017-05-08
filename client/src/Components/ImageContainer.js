@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
 
 export default class ImageContainer extends Component{
-  constuctor(props){
-  }
-
   clickHandler(){
     this.props.onClick(this.props.index)
   }

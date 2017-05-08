@@ -26,9 +26,17 @@ module.exports.getRandomColection = function(callback){
   Collection.findOneRandom(callback)
 }
 
+module.exports.incrementStarsById = function(id, callback){
+  Collection.findOneAndUpdate({_id:id},{$inc:{stars:1}}, callback);
+}
+
+module.exports.decrementStarsById = function(id, callback){
+  Collection.findOneAndUpdate({_id:id},{$inc:{stars:-1}}, callback);
+}
+
 module.exports.getAllCollections = function(callback){
     Collection.find()
-      .select({"ownerId":1, "title":1,"_id":0,"categories":1,"url":1,"stars":1,"votes":1,"images":1})
+      .select({"ownerId":1, "title":1,"_id":1,"categories":1,"url":1,"stars":1,"votes":1,"images":1})
       .populate("images", {"_id":0, "url":1})
       .populate("ownerId", {"_id":1, "username":1})
       .exec(callback)

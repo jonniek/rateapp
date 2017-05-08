@@ -6,6 +6,7 @@ var bcrypt = require('bcrypt-nodejs')
 var User = new Schema({
   username:  { type:String, default: "anon" },
   password: { type: String, default: randomString(10)},
+  stars: [{type: Schema.ObjectId, ref: 'Collection'}],
   //birthday: Date,
   //admin: Boolean
 })
@@ -13,19 +14,27 @@ var User = new Schema({
 var User = module.exports = mongoose.model('User', User)
 
 module.exports.createUser = function(newUser, callback){
-    newUser.save(callback)
+  newUser.save(callback)
 }
 
 module.exports.getAllUsers = function(callback){
-    User.find({}, {username:1}, callback)
+  User.find({}, {username:1}, callback)
+}
+
+module.exports.addStar = function(userid, pass, starid, callback){
+  User.findOneAndUpdate({_id:userid, password: pass},{$push:{stars:starid}}, callback);
+}
+
+module.exports.removeStar = function(userid, pass, starid, callback){
+  User.findOneAndUpdate({_id:userid, password:pass}, {$pull:{stars:starid}}, callback);
 }
 
 module.exports.getUserbyUsername = function(username,callback){
-    User.findOne({username:username}, callback)
+  User.findOne({username:username}, callback)
 }
 
 module.exports.getUserbyId = function(id,callback){
-    User.findById(id).select({'username':1}).exec(callback)
+  User.findById(id).select({'username':1}).exec(callback)
 }
 
 module.exports.checkPassOfUser = function(hash, id, callback){
