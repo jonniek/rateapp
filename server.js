@@ -47,8 +47,37 @@ app.put('/api/collections/:collid/rating', function(req, res){
 })
 
 app.post('/api/users', function(req, res){
-	User.createUser(new User(), function(err, response){
+	User.createUser(new User({stars:[]}), function(err, response){
 		res.json(response)
+	})
+})
+
+app.put('/api/users/:id/stars', function(req, res){
+	console.log("Access put")
+	var userid = req.params.id
+	var pass = req.body.userhash
+	var starid = req.body.starid
+	console.log(req.params, req.body)
+	console.log(userid, pass, starid)
+	if(!starid || !pass || !userid ){
+		res.status = 404
+		res.json({error:"invalid data"})
+		return
+	}
+	User.addStar(userid, pass, starid, function(err, response){
+		if(err) throw err;
+		res.json({'star':'added'})
+	})
+})
+
+app.delete('/api/users/:id/stars', function(req, res){
+	console.log("Access delete")
+	var userid = req.params.id
+	var pass = req.body.userhash
+	var starid = req.body.starid
+	User.removeStar(userid, pass, starid, function(err, response){
+		if(err) throw err;
+		res.json({'star':'removed'})
 	})
 })
 

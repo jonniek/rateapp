@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Link } from 'react-router-dom'
-
+import { Star } from '../Components'
 //import { LinkContainer } from 'react-router-bootstrap'
 import { ButtonToolbar, DropdownButton, MenuItem, Button } from 'react-bootstrap'
 
@@ -83,6 +83,7 @@ export default class Collections extends Component {
             </Link>
             <div className="card-info">
               <h3><Link to={item.url}>{item.title}</Link></h3>
+              <Star starid={item._id} stared={false} stars={10}/>
               <div className="table">
                 <div><span>Votes:</span><span>{item.votes}</span></div>
                 <div><span>Categories:</span><span>{item.categories.map( (cat,i) => {
