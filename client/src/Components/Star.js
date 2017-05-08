@@ -17,6 +17,7 @@ export default class Star extends Component{
     if(!this.userid || !this.userhash) return;
     const method = !this.state.stared ? 'put':'delete'
     const url = "/api/users/"+this.userid+"/stars"
+    const addCount = !this.state.stared ? 1:-1
     let data = {userhash:this.userhash, starid:this.starid}
     fetch(url, {
       method: method,
@@ -26,7 +27,7 @@ export default class Star extends Component{
       },
       body: JSON.stringify(data),
     })
-    this.setState({ stared: !this.state.stared, stars: this.state.stars+1 })
+    this.setState({ stared: !this.state.stared, stars: this.state.stars+addCount })
   }
 
   componentDidMount(){

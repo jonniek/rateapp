@@ -136,7 +136,7 @@ img.preview:hover + .previewDelete, .previewDelete:hover{
   position: relative;
 }
 .star-container{
-  margin:5px 0px;
+  margin:10px 0px;
 }
 .star-container img{
   height: 30px;
