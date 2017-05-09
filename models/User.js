@@ -7,6 +7,7 @@ var User = new Schema({
   username:  { type:String, default: "anon" },
   password: { type: String, default: randomString(10)},
   stars: [{type: Schema.ObjectId, ref: 'Collection'}],
+  collections: [{type: Schema.ObjectId, ref: 'Collection'}],
   //birthday: Date,
   //admin: Boolean
 })
@@ -21,12 +22,53 @@ module.exports.getAllUsers = function(callback){
   User.find({}, {username:1}, callback)
 }
 
+module.exports.updateUsername = function(userid, pass, newname, callback){
+  User.findOneAndUpdate({_id:userid, password: pass},{username:newname}, callback);
+}
+
 module.exports.addStar = function(userid, pass, starid, callback){
   User.findOneAndUpdate({_id:userid, password: pass},{$push:{stars:starid}}, callback);
 }
 
+module.exports.addCollectionToId = function(userid, pass, colid, callback){
+  User.findOneAndUpdate({_id:userid, password: pass},{$push:{collections:colid}}, callback);
+}
+
 module.exports.removeStar = function(userid, pass, starid, callback){
   User.findOneAndUpdate({_id:userid, password:pass}, {$pull:{stars:starid}}, callback);
+}
+
+module.exports.getStarredCollectionsById = function(userid, callback){
+  User.findOne({_id:userid},{"password":0}).populate({
+                           path: 'stars',
+                           select: {"ownerId":1,"title":1,"_id":1,"categories":1,"url":1,"stars":1,"images":1},
+                           populate: [
+                            {
+                              path: 'images',
+                              select: {"_id":0, "url":1},
+                              model: 'Image',
+                            },{
+                              path: 'ownerId',
+                              select: {'_id':1, 'username':1},
+                              model: 'User'
+                            }
+                           ]
+                        }).populate({
+                           path: 'collections',
+                           select: {"ownerId":1,"title":1,"_id":1,"categories":1,"url":1,"stars":1,"images":1},
+                           populate: [
+                            {
+                              path: 'images',
+                              select: {"_id":0, "url":1},
+                              model: 'Image',
+                            },{
+                              path: 'ownerId',
+                              select: {'_id':1, 'username':1},
+                              model: 'User'
+                            }
+                           ]
+                        })
+                        .exec(callback)
 }
 
 module.exports.getUserbyUsername = function(username,callback){
@@ -34,7 +76,7 @@ module.exports.getUserbyUsername = function(username,callback){
 }
 
 module.exports.getUserbyId = function(id,callback){
-  User.findById(id).select({'username':1}).exec(callback)
+  User.findById(id).select({'username':1, 'stars':1}).exec(callback)
 }
 
 module.exports.checkPassOfUser = function(hash, id, callback){

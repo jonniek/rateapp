@@ -5,19 +5,18 @@ export default class Star extends Component{
     super();
     this.state = {
       stars: props.stars,
-      stared: props.staed,
+      starred: props.starred,
     }
-    this.userid = localStorage.getItem("userid")
-    this.userhash = localStorage.getItem("userhash")
+    this.userid = props.userid
+    this.userhash = props.userhash
     this.starid = props.starid
-    console.log(props)
   }
 
   clickHandler(){
     if(!this.userid || !this.userhash) return;
-    const method = !this.state.stared ? 'put':'delete'
+    const method = !this.state.starred ? 'put':'delete'
     const url = "/api/users/"+this.userid+"/stars"
-    const addCount = !this.state.stared ? 1:-1
+    const addCount = !this.state.starred ? 1:-1
     let data = {userhash:this.userhash, starid:this.starid}
     fetch(url, {
       method: method,
@@ -27,14 +26,15 @@ export default class Star extends Component{
       },
       body: JSON.stringify(data),
     })
-    this.setState({ stared: !this.state.stared, stars: this.state.stars+addCount })
+    this.setState({ starred: !this.state.starred, stars: this.state.stars+addCount })
   }
 
   componentDidMount(){
+
   }
 
   render(){
-    const url = !this.state.stared ? require('../../public/images/star.png') : require('../../public/images/star-filled.png')
+    const url = !this.state.starred ? require('../../public/images/star.png') : require('../../public/images/star-filled.png')
     return (
       <div className="star-container">
         <span>{this.state.stars}</span>

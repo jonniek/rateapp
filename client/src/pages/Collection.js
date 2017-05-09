@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import { Button } from 'react-bootstrap'
-import { LinkContainer } from 'react-router-bootstrap'
+import { LinkContainer, Col, Row, Grid } from 'react-router-bootstrap'
 
 import { ImageContainer, NavBar } from '../Components/'
 
@@ -96,12 +96,21 @@ export default class Collections extends Component {
           <div className="container">
             <h2>{ this.state.title }</h2>
             <hr />
-            <h3>{ this.state.questions[this.state.currentQuestion] }</h3>
+            <h3 className="hidden-sm hidden-xs">{ this.state.questions[this.state.currentQuestion] }</h3>
             <div className="comparison-container center-children">
-              <ImageContainer onClick={this.setWinner} index={0} image={this.state.images[this.state.selectedImages[0]]} />
-              <span className="versus">VS</span>
-              <ImageContainer onClick={this.setWinner} index={1} image={this.state.images[this.state.selectedImages[1]]} />
-              <div className="clearfix" />
+              <div className="row">
+                <div className="col-md-5 col-sm-12 col-xs-12 left-image">
+                  <ImageContainer onClick={this.setWinner} index={0} image={this.state.images[this.state.selectedImages[0]]} />
+                </div>
+                <div className="col-md-2 col-sm-12 col-xs-12 divisor">
+                  <span className="versus hidden-sm hidden-xs">VS</span>
+                  <h3 className="hidden-md hidden-lg hidden-xl">{ this.state.questions[this.state.currentQuestion] }</h3>
+                </div>
+
+                <div className="col-md-5 col-sm-12 col-xs-12 right-image">
+                  <ImageContainer onClick={this.setWinner} index={1} image={this.state.images[this.state.selectedImages[1]]} />
+                </div>
+              </div>
               <LinkContainer exact to={`/collections/${this.props.match.params.slug}/results`}>
                 <Button className="results">Results</Button>
               </LinkContainer>

@@ -58,9 +58,11 @@ export default class Results extends Component {
   }
   
   render() {
-    const selected = this.state.selectedQuestion===-1 ? "Average score":
+    let selected = this.state.selectedQuestion===-1 ? "Average score":
       this.state.questions[this.state.selectedQuestion]
-
+    if(this.state.questions.length===1){
+      selected = this.state.questions[0]
+    }
     const images = this.state.images
       .sort(this.sort_algorithms.handler.bind(this))
       .map((image, index) => {
@@ -77,7 +79,7 @@ export default class Results extends Component {
       return (
         <MenuItem
           onClick={this.setQuestion.bind(this, index)}
-          active={this.state.selectedQuestion===index}
+          active={this.state.selectedQuestion===index || this.state.question===1}
           eventKey={index+2}
           key={index}
         >{ question }</MenuItem>
@@ -104,11 +106,13 @@ export default class Results extends Component {
                   title={ selected }
                   id="dropdown-size-medium"
                 >
-                  <MenuItem
-                    onClick={this.setQuestion.bind(this, -1)}
-                    active={this.state.selectedQuestion===-1}
-                    eventKey="1"
-                  >Average score</MenuItem>
+                  {this.state.questions.length!==1 &&
+                    <MenuItem
+                      onClick={this.setQuestion.bind(this, -1)}
+                      active={this.state.selectedQuestion===-1}
+                      eventKey="1"
+                    >Average score</MenuItem>
+                  }
                   { menuItems }
                 </DropdownButton>
                 <Button

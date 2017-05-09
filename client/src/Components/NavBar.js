@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
-import { Navbar, Nav, NavDropdown, NavItem, MenuItem } from 'react-bootstrap'
+import { Link } from 'react-router-dom'
+import { Navbar, Nav, NavItem } from 'react-bootstrap'
 import { LinkContainer } from 'react-router-bootstrap'
 
 export default class NavBar extends Component{
@@ -9,7 +10,9 @@ export default class NavBar extends Component{
   render(){
     return (
       <div>
-        <h1>RateApp</h1>
+        <div className="home-link center-children">
+          <Link to="/"><h1>RateApp</h1></Link>
+        </div>
         <Navbar collapseOnSelect>
           <Navbar.Header>
             <Navbar.Toggle />

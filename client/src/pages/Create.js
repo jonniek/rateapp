@@ -145,7 +145,7 @@ export default class Collections extends Component {
     console.log(this.userid)
     const uploading = this.state.files.
       reduce((bool, nfile) => {
-        if(nfile[1]==true){ bool = true }
+        if(nfile[1]===true){ bool = true }
         return bool
       }, false)
     if(uploading){
@@ -160,7 +160,7 @@ export default class Collections extends Component {
     }else if(!this.state.termsAccepted){
       this.setError("You need to accept the terms")
       return
-    }else if(this.userid==""){
+    }else if(this.userid===""){
       alert("Unknown error, try refreshing the page")
       return
     }
@@ -213,7 +213,7 @@ export default class Collections extends Component {
               type="text"
               value={string}
               onChange={this.setComparison.bind(this, index)}
-              placeholder={index==0?"ex. Which one is more X?":""}
+              placeholder={index===0?"ex. Which one is more X?":""}
             />
             { index>0 &&
               <Button tabIndex="-1" bsSize="small" className="worst" onClick={this.removeComparison.bind(this, index)}>Remove</Button>
@@ -260,19 +260,21 @@ export default class Collections extends Component {
               <label htmlFor="categories">Categories, separated by space</label><br />
               <input id="categories" type="text" placeholder="ex. games characters" onChange={this.setField.bind(this, "categories")}/>
             </div>
-            <label for="terms">Terms and conditions</label><br/>
-            <input type="checkbox" id="terms" onChange={this.setField.bind(this,"termsAccepted")}/>
-            <span className="input-tip terms">
-              I have read and agree to the
-                <a className="input-tip fakelink" onClick={this.toggleTerms.bind(this)}>Terms and conditions</a>
-            </span>
-            {this.state.terms &&
-              <ul>
-                <li>We reserve the right to remove anything or stop service without notice or reason</li>
-                <li>Do not upload illegal, copyrighted, offensive, libelous or defamatory images</li>
-                <li>That's about it</li>
-              </ul>
-            }<br/>
+            <div className="singleField">
+              <label for="terms">Terms and conditions</label><br/>
+              <input type="checkbox" id="terms" onChange={this.setField.bind(this,"termsAccepted")}/>
+              <span className="input-tip terms">
+                I have read and agree to the
+                  <a className="input-tip fakelink" onClick={this.toggleTerms.bind(this)}>Terms and conditions</a>
+              </span>
+              {this.state.terms &&
+                <ul>
+                  <li>We reserve the right to remove anything or stop service without notice or reason</li>
+                  <li>Do not upload illegal, copyrighted, offensive, libelous or defamatory images</li>
+                  <li>That's about it</li>
+                </ul>
+              }<br/>
+            </div>
             <label>Files</label><br/>
             <Button onClick={() => { dropzoneRef.open() }}>
               Upload Images
