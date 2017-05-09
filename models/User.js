@@ -41,7 +41,7 @@ module.exports.removeStar = function(userid, pass, starid, callback){
 module.exports.getStarredCollectionsById = function(userid, callback){
   User.findOne({_id:userid},{"password":0}).populate({
                            path: 'stars',
-                           select: {"ownerId":1,"title":1,"_id":1,"categories":1,"url":1,"stars":1,"images":1},
+                           select: {"ownerId":1,"title":1,"_id":1,"categories":1,"url":1,"votes":1,"stars":1,"images":1},
                            populate: [
                             {
                               path: 'images',
@@ -55,7 +55,7 @@ module.exports.getStarredCollectionsById = function(userid, callback){
                            ]
                         }).populate({
                            path: 'collections',
-                           select: {"ownerId":1,"title":1,"_id":1,"categories":1,"url":1,"stars":1,"images":1},
+                           select: {"ownerId":1,"title":1,"_id":1,"categories":1,"url":1,"votes":1,"stars":1,"images":1},
                            populate: [
                             {
                               path: 'images',
