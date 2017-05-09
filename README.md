@@ -1,15 +1,17 @@
-![rateapp-preview](http://i.imgur.com/zVqD1EW.png)
+![rateapp-preview](https://i.imgur.com/EFVr4AQ.png)
 # RateApp
-Create collections of images and criteria that images will be ranked by. Users will vote between 2 random images which one matches the criteria better. This way the collection will get ranked in a crowdsourced order.
-
+Let users create collections of images and criteria that images will be ranked by. Users will vote between 2 random images which one matches the criteria better. This way the collection will get ranked in a crowdsourced order.  
+  
+A demo of this is running at http://rateapp.tk  
+  
 ### Note
-This is a work in progress and has a lot of bad practice placeholders such as [authentication](https://github.com/donmaiq/rateapp/blob/master/client/src/pages/Create.js#L35). Use with caution. List of incomplete features:
+This is a work in progress and has a lot of bad practice placeholders such as authentication. Use with caution. List of incomplete features:
   - proper authentication
-  - secure backend(check client data, authentication, cors-stuff maybe?)
-  - React component structure
+  - secure backend(check client data, authentication, cors-stuff maybe, errorhandling?)
+  - maybe just redo the whole backend with better architecture
+  - React component structure, it's a mess right now
   - user page, allow claiming of generated account with username and password.
-  - starring collections
-  - editing/deleting collections. Adding more options like shared ownership, private collection(url only) etc
+  - Adding more options like shared ownership, private(url only) etc to collections
   - unit tests
 
 ### Requirements
@@ -52,4 +54,4 @@ in root directory:
 npm run build
 npm run start
 ```
-Use forever, pm2, nodemon etc to start server in background for production.
+Tip: Use forever, pm2, nodemon, nohup etc to start server in background for production.

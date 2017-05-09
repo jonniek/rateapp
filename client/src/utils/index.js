@@ -45,6 +45,24 @@ export function getUsers(){
   })
 }
 
+export function removeCollection(id){
+  return new Promise( resolve => {
+    const uid = localStorage.getItem("userid")
+    const hash = localStorage.getItem("userhash")
+    fetch('/api/collections/'+id, {
+      method: 'DELETE',
+      headers:{
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+      },
+      body: JSON.stringify({userid: uid, userhash: hash})
+    }).then( res => res.json())
+    .then( data => {
+      resolve(data.message)
+    })
+  })
+}
+
 export function getUserDeep(id){
   return new Promise(resolve =>{
     fetch('/api/users/'+id+'/deep')

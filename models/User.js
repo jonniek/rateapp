@@ -22,6 +22,10 @@ module.exports.getAllUsers = function(callback){
   User.find({}, {username:1}, callback)
 }
 
+module.exports.checkCollection = function(userid, pass, collid, callback){
+  User.findOne({_id:userid, password: pass, collections: collid}, callback)
+}
+
 module.exports.updateUsername = function(userid, pass, newname, callback){
   User.findOneAndUpdate({_id:userid, password: pass},{username:newname}, callback);
 }

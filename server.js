@@ -55,6 +55,7 @@ app.post('/api/users', function(req, res){
 		res.json(response)
 	})
 })
+
 app.get('/api/users', function(req, res){
 	User.getAllUsers(function(err, response){
 		if(err) throw err;
@@ -135,8 +136,8 @@ app.get('/api/users/:id/deep', function(req, res){
 	})
 })
 
-app.get('/api/users/:collection/collections', function(req, res){
-	var target = req.params.collection
+app.get('/api/users/:id/collections', function(req, res){
+	var target = req.params.id
 	Collection.getCollectionsbyOwner(target, function(err, response){
 		if(err) throw err;
 		res.json(response)
@@ -148,6 +149,27 @@ app.get('/api/collections', function(req, res){
 		if(err) throw err;
 		res.json(response)
 	})
+})
+
+app.delete('/api/collections/:id', function(req, res){
+	var userid = req.body.userid
+	var userhash = req.body.userhash
+	var collid = req.params.id
+	if(collid && userid && userhash){
+		User.checkCollection(userid, userhash, collid, function(err, response){
+			if (err) throw err;
+			if(response){
+				Collection.removeCollection(collid, function(err, response){
+					if(err)throw err;
+					res.json({success:"deleted"})
+				})
+			}else{
+				res.json({error:"no collection found"})
+			}
+		})
+	}else{
+		res.json({error:"invalid parameters"})
+	}
 })
 
 app.post('/api/collections', function(req, res){

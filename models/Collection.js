@@ -26,6 +26,10 @@ module.exports.getRandomColection = function(callback){
   Collection.findOneRandom(callback)
 }
 
+module.exports.removeCollection = function(id, callback){
+  Collection.remove({_id: id}, callback)
+}
+
 module.exports.incrementStarsById = function(id, callback){
   Collection.findOneAndUpdate({_id:id},{$inc:{stars:1}}, callback);
 }

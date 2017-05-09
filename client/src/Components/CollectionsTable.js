@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Star } from '../Components'
 //import { LinkContainer } from 'react-router-bootstrap'
 import { ButtonToolbar, DropdownButton, MenuItem, Button, Clearfix } from 'react-bootstrap'
-import { createUser, getUser } from '../utils/'
+import { createUser, getUser, removeCollection } from '../utils/'
 
 export default class Collections extends Component {
 
@@ -23,6 +23,7 @@ export default class Collections extends Component {
     }
     this.hideCreate = props.hideCreate || false
     this.useCollection = props.collections || false
+    this.displayRemove = props.displayRemove || false
   }
 
   componentDidMount() {
@@ -79,6 +80,18 @@ export default class Collections extends Component {
     this.setState({ sort: str })
   }
 
+  removeColl(id){
+    let confirmation = confirm("Are you sure you want to delete this collection? This cannot be undone.")
+    if(confirmation){
+      let collections = this.state.collections.filter( col => col._id !== id )
+      removeCollection(id)
+      .then( data => {
+        console.log("deleted")
+        this.setState({ collections })
+      })
+    }
+  }
+
   render() {
     const collections = this.state.collections
       .filter( item => item.title.toLowerCase().includes(this.state.search.toLowerCase()) || item.categories
@@ -127,6 +140,9 @@ export default class Collections extends Component {
                   </span>
                 </div>
               </div>
+              {this.displayRemove && 
+                <Button bsSize="small" className="worst" onClick={this.removeColl.bind(this, item._id)}>Remove</Button>
+              }
             </div>
           </div>
         )
