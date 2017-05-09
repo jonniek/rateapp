@@ -71,7 +71,6 @@ export default class Collections extends Component {
       )
       .sort(this.sort_functions[this.state.sort].bind(this))
       .map( (item, index) => {
-        console.log(item)
         return(
           <div key={index} className="collection-card">
             <Link to={item.url}>
@@ -139,7 +138,7 @@ export default class Collections extends Component {
                     eventKey="2"
                   >title</MenuItem>
                 </DropdownButton>
-                <Button onClick={this.toggleSortOrder.bind(this)}>
+                <Button className="btn-order" onClick={this.toggleSortOrder.bind(this)}>
                   {`order: ${this.state.sort_descending===1?'desc':'asc'}`}
                 </Button>
                 <span className="search">
