@@ -56,10 +56,11 @@ app.put('/api/collections/:collid/rating', function(req, res){
 app.post('/api/users', function(req, res){
 	User.createUser(new User({stars:[],collections:[]}), function(err, response){
 		if(err) throw err;
-		var token = jwt.sign(response, app.get('superSecret'), {
-      expiresIn: '1h'
+		console.log(response)
+		var token = jwt.sign({ id: response._id}, app.get('superSecret'), {
+      expiresIn: '24h'
     })
-		res.json({ success: 'true', user: response, token: token })
+		res.json({ success: true, token: token, username: response.username })
 	})
 })
 
@@ -68,20 +69,6 @@ app.get('/api/users', function(req, res){
 		if(err) throw err;
 		res.json(response)
 	})
-})
-
-app.put('/api/users/:id', function(req, res){
-	var id = req.params.id
-	var hash = req.body.password
-	var name = req.body.username
-	if(!id || !hash || !name){
-		res.json({message:"Failed, try another name"})
-	}else{
-		User.updateUsername(id, hash, name, function(err, response){
-			if(err) throw err;
-			res.json({message:"Success!"})
-		})
-	}
 })
 
 app.put('/api/users/:id/stars', function(req, res){
@@ -230,16 +217,17 @@ app.post('/api/image', upload.array('image'), function(req, res){
 	res.json({ filename: req.files[0].filename })
 })
 
+//ADD ROUTE SERCURING MIDDLEWARE
 app.use(function(req, res, next) {
 	var token = req.body.token || req.query.token || req.headers['x-access-token']
-
+	console.log("Someone came with token:",token)
 	if (token) {
 		jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
       if (err) {
         return res.json({ success: false, message: 'Failed to authenticate token.' })   
       } else {
         // if everything is good, save to request for use in other routes
-        req.decoded = decoded  
+        req.userid = decoded
         next()
       }
     });
@@ -251,8 +239,22 @@ app.use(function(req, res, next) {
 	}
 })
 
-app.get('/api/protected', function(req, res){
-	res.json({protected: true})
+
+app.put('/api/users/:id', function(req, res){
+	var id = req.params.id
+	var name = req.body.username
+	if(!name){
+		res.json({message:"Failed, try another name"})
+	}else{
+		User.updateUsername(id, name, function(err, response){
+			if(err) throw err;
+			res.json({success: true, message:"Success!"})
+		})
+	}
+})
+
+app.post('/api/verifytoken', function(req, res){
+	res.json({success: true, message:"Token is valid"})
 })
 
 function randomString(length) {

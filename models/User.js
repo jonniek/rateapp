@@ -26,8 +26,8 @@ module.exports.checkCollection = function(userid, pass, collid, callback){
   User.findOne({_id:userid, password: pass, collections: collid}, callback)
 }
 
-module.exports.updateUsername = function(userid, pass, newname, callback){
-  User.findOneAndUpdate({_id:userid, password: pass},{username:newname}, callback);
+module.exports.updateUsername = function(userid, newname, callback){
+  User.findOneAndUpdate({_id:userid},{username:newname}, callback);
 }
 
 module.exports.addStar = function(userid, pass, starid, callback){

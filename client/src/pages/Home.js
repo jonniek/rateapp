@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { NavBar } from '../Components/'
 import { Link } from 'react-router-dom'
 import { Grid, Col, Row } from 'react-bootstrap'
-import { createUser, getUsers } from '../utils/'
+import { createUser, verifyToken, getUsers } from '../utils/'
 
 export default class Home extends Component {
   constructor(){
@@ -22,12 +22,15 @@ export default class Home extends Component {
     })
   }
 
-  componentDidMount(){
-    createUser()
-    getUsers().then(users => {
-      console.log(users)
-      this.setState({ users })
-    })
+  async componentDidMount(){
+    const loggedIn = await verifyToken()
+    console.log(loggedIn)
+    if(!loggedIn){
+      createUser()
+      console.log("no token, creating user")
+    }else{
+      console.log("Is token!")
+    }
   }
 
   render() {

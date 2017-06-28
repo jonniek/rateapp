@@ -15,7 +15,7 @@ export default class Account extends Component {
   }
 
   componentDidMount() {
-    createUser().then( (id) => getUserDeep(id)).then( data => {
+    getUserDeep().then( data => {
       this.setState({
         fetched:true,
         username: data.username,
@@ -51,10 +51,12 @@ export default class Account extends Component {
                 <Button tabIndex="-1" className="add" bsSize="small" onClick={this.saveName.bind(this)}>Save</Button>
               </div>
             </div>
+            {/*
             <div className="collections">
               <CollectionsTable displayRemove={true} title="Your collections" collections={ this.state.userCollections } />
               <CollectionsTable hideCreate={true} title="Starred collections" collections={ this.state.starredCollections } />
             </div>
+            */}
           </div>
         }
       </div>
