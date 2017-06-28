@@ -10,12 +10,16 @@ var upload = multer({ dest: './public/uploads/' })
 
 var async = require('async')
 
+var jwt = require('jsonwebtoken')
+
 var Collection = require('./models/Collection')
 var Image = require('./models/Image')
 var Rating = require('./models/Rating')
 var User = require('./models/User')
 
 var app = express()
+
+app.set('superSecret', 'Redbean-flyinc-dragonfly')
 
 var allowCrossDomain = function(req, res, next) {
     res.header('Access-Control-Allow-Origin', '*');
@@ -52,7 +56,10 @@ app.put('/api/collections/:collid/rating', function(req, res){
 app.post('/api/users', function(req, res){
 	User.createUser(new User({stars:[],collections:[]}), function(err, response){
 		if(err) throw err;
-		res.json(response)
+		var token = jwt.sign(response, app.get('superSecret'), {
+      expiresIn: '1h'
+    })
+		res.json({ success: 'true', user: response, token: token })
 	})
 })
 
@@ -221,6 +228,31 @@ app.post('/api/collections', function(req, res){
 
 app.post('/api/image', upload.array('image'), function(req, res){
 	res.json({ filename: req.files[0].filename })
+})
+
+app.use(function(req, res, next) {
+	var token = req.body.token || req.query.token || req.headers['x-access-token']
+
+	if (token) {
+		jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
+      if (err) {
+        return res.json({ success: false, message: 'Failed to authenticate token.' })   
+      } else {
+        // if everything is good, save to request for use in other routes
+        req.decoded = decoded  
+        next()
+      }
+    });
+	}else{
+		return res.status(403).send({ 
+        success: false, 
+        message: 'No token provided.' 
+    })
+	}
+})
+
+app.get('/api/protected', function(req, res){
+	res.json({protected: true})
 })
 
 function randomString(length) {

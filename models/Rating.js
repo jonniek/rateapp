@@ -1,7 +1,8 @@
 var mongoose = require('mongoose')
 var db = mongoose.connection
 var Schema = mongoose.Schema
-var elo = require('elo-rank')(30);
+var Elo = require('elo-rank')
+var elo = new Elo(30)
 
 
 var Rating = new Schema({
