@@ -20,6 +20,8 @@
     "mongodb": "^2.2.25",
     "mongoose": "^4.9.4",
     "mongoose-simple-random": "^0.4.1",
-    "multer": "*"
+    "morgan": "^1.8.2",
+    "multer": "*",
+    "pg": "^6.4.0"
   }
 }
