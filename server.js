@@ -37,12 +37,11 @@ const calcRating = (win, lose) =>{
 
 /* AUTHENTICATION MIDDLEWARE FUNCTION */
 const verifyToken = (req, res, next) => {
-	console.log("REQUESTED VERIFICATION")
-	var token = req.body.token || req.query.token || req.headers['x-access-token']
+	const token = { req.body.token }
 	if (token) {
 		jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
       if (err) {
-        return res.json({ success: false, message: 'Failed to authenticate token.' })   
+        return res.status(422).json({ success: false, message: 'Invalid authentication token.' })   
       } else {
         req.token = decoded
         next()
@@ -58,11 +57,11 @@ const verifyToken = (req, res, next) => {
 
 /* RETURN A PROMISE OF USER WITH OBJECT PARAMETER WHERE CLAUSE */
 const findUserquery = (where) => {
-	const { query, queryparams } = query_from_model(where, [])
+	const { query, queryparams } = query_from_model(where, [], ' AND ')
 	return pool.query(`SELECT password, account_id FROM account WHERE ${query}`, queryparams)
 }
 
-/* COMPARE A STRING AND HASH WITH A RESOLVE AND REJECT */
+/* COMPARE A STRING AND HASH */
 const compareHash = (string, hash, cb) => {
 	bcrypt.compare(string, hash, cb)
 }
@@ -101,13 +100,13 @@ const check_userpassword = (where, pass) => {
 }
 
 /* CREATE SQL QUERY MAPPING -> field = $1, field2 = $2, [value1, value2] */
-const query_from_model = (model, queryparams) => {
+const query_from_model = (model, queryparams, delimiter=", ") => {
 	let query = ""
 	let i = queryparams.length + 1
 	for (let key in model) {
 		if(model[key] !== null){
 			queryparams.push(model[key])
-			if(query!=="") query+=", "
+			if(query!=="") query+=delimiter
 			query += `${key}=$${i}`
 			i += 1
 		}
