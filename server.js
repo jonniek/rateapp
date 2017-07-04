@@ -37,7 +37,7 @@ const calcRating = (win, lose) =>{
 
 /* AUTHENTICATION MIDDLEWARE FUNCTION */
 const verifyToken = (req, res, next) => {
-	const token = { req.body.token }
+	const { token } = req.body
 	if (token) {
 		jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
       if (err) {
@@ -434,51 +434,117 @@ app.delete('/api/collections/:id', function(req, res){
 	}
 })
 
-app.post('/api/collections', function(req, res){
-	var tmp = req.body
-  var images = req.body.images
-  req.body.images = []
-	tmp.url = randomString(5)
-	tmp.private = false
-	var hash = req.body.ownerHash
-	var uid = req.body.ownerId
-	User.checkPassOfUser(hash, uid, function(error, response){
-		if(!response.id){
-			res.status = 404
-			res.json({error: "Unauthorized user"})
-		}else{
-
-			Collection.createCollection(new Collection(tmp), function(error, response){
-				if(error) throw error;
-				var collId = response.id
-
-				User.addCollectionToId(uid, hash, collId, function(err, response){if(err)throw err;})
-
-				var rating = 
-					Array.apply(null, Array(req.body.subtitle.length))
-						.map(Number.prototype.valueOf,1200)
-
-				async.each(images, function(img){
-					Rating.createRating(new Rating({rating: rating}), function(err, response){
-						if(err) throw err;
-						var newImage = new Image({
-							parentId: collId,
-							url: "/uploads/"+img,
-							rating: response.id
-						})
-						Image.createImage(newImage, function(err, response2){
-							Collection.addImageToCollection(response2.id, collId, function(err, hmm){
-								if(err) throw err;
-							})
-						})
-					})
-				})
-
-				res.json({ url: tmp.url })
-			})
-		}
-
+const uniqueCollectionUrl = url => {
+	return new Promise( (resolve, reject) => {
+		pool.query(`SELECT col_id FROM collection WHERE url=$1`, [url])
+		.then( response => {
+			if(response.rowCount==0){
+				return resolve(true)
+			}else{
+				return resolve(false)
+			}
+		}).catch(e => reject(e))
 	})
+}
+
+app.post('/api/collections', verifyToken, async (req, res) => {
+	let url = randomString(5)
+	try{
+
+	while(! await uniqueCollectionUrl(url)){
+		url = randomString(5)
+	}
+
+	const { hidden, nsfw, title } = req.body
+  const images = JSON.parse(req.body.images)
+  const questions = JSON.parse(req.body.questions)
+	const owner_id = req.token.account_id
+
+	if(!hidden || !nsfw || !title){
+		return res.status(400).json({ success:false, message:"invalid parameters" })
+	}
+
+  const col_query =`
+  	INSERT INTO
+  	collection(owner_id, title, url, private, nswf)
+  	VALUES($1,$2,$3,$4,$5)
+  	RETURNING col_id
+  `
+
+  const collection_res = 
+  	await pool.query(col_query, [owner_id, title, url, hidden, nsfw])
+
+  const { col_id } = collection_res.rows[0]
+
+  /* MAP IMAGE ARRAY INTO (col_id=$1, url=$2), (...) INSERT VALUES */
+  const insert_query = (prefix, suffix, col_id, array) => {
+  	const query = array.reduce((loop, url, index, arr) => {
+  		let delimiter = index<arr.length-1 ? ', ':''
+  		loop += `($1,$${index+2})${delimiter}`
+  		if(index==arr.length-1) loop+=suffix
+  		return loop
+  	}, prefix )
+  	array.unshift(col_id)
+  	return [ query, array ]
+  }
+
+  console.log("TIME TO MAKE QUERY", col_id, images)
+
+  const [ image_query, image_query_params ] =
+  	insert_query(
+  		'INSERT INTO image(col_id, url) VALUES ',
+  		' RETURNING image_id',
+  		col_id,
+  		images
+  	)
+
+ 	console.log(image_query, image_query_params)
+
+  const image_res = await pool.query(image_query, image_query_params)
+
+  const image_ids = image_res.rows.map(row=>row.image_id)
+
+  const [ question_query, question_query_params ] =
+  	insert_query(
+  		'INSERT INTO question(col_id, question) VALUES ',
+  		' RETURNING question_id',
+  		col_id,
+  		questions
+  	)
+
+  const question_res = await pool.query(question_query, question_query_params)
+
+  const question_ids = question_res.rows.map(row=>row.question_id)
+
+  const rating_query_builder = (question_ids, image_ids) => {
+  	let pairs = []
+  	for(let q=1;q<=question_ids.length;q++){
+	  	for(let i=1;i<=image_ids.length;i++){
+	  		pairs.push(`($${i},$${image_ids.length+q})`)
+	  	}
+  	}
+  	console.log("PAIRS",pairs)
+  	const q = pairs.reduce( (query, pair, index, arr) => {
+  		let delimiter = index<arr.length-1 ? ', ':''
+  		return query+=pair+delimiter
+  	}, 'INSERT INTO rating(image_id, question_id) VALUES ')
+  	return [ q, image_ids.concat(question_ids)]
+  }
+
+  const [rating_query, rating_query_params] = 
+  	rating_query_builder(question_ids, image_ids)
+  
+ 	const rating_res = await pool.query(rating_query, rating_query_params)
+
+ 	if(rating_res.rowCount>0){
+ 		return res.json({ success: true, message: "Collection created", data: { url }})
+ 	}else{
+ 		res.status(404).json({ success: false, message: "Something mysterious happened" })
+ 	}
+
+  }catch(e){
+  	return res.status(500).json({ success: false, error: e })
+  }
 })
 
 app.post('/api/image', upload.array('image'), function(req, res){
@@ -492,9 +558,9 @@ app.use('/api/*', function(req, res){
 
 function randomString(length) {
 	var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'
-  var result = '';
-  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)];
-  return result;
+  var result = ''
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)]
+  return result
 }
 
 app.listen(3001)
