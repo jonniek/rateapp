@@ -129,6 +129,26 @@ const refreshToken = (token, expiresIn='14d') => {
 	return jwt.sign({account_id:token.account_id}, app.get('superSecret'), { expiresIn })
 }
 
+/* UPDATE USER LAST LOGIN */
+const update_lastlogin = id => {
+	pool.query('UPDATE account SET last_login = now() WHERE account_id = $1', [id])
+	.catch( err => console.log("Error setting lastlogin", err))
+}
+
+/* TEST IS URL IS UNIQUE */
+const uniqueCollectionUrl = url => {
+	return new Promise( (resolve, reject) => {
+		pool.query(`SELECT col_id FROM collection WHERE url=$1`, [url])
+		.then( response => {
+			if(response.rowCount==0){
+				return resolve(true)
+			}else{
+				return resolve(false)
+			}
+		}).catch(e => reject(e))
+	})
+}
+
 /* ROUTES */
 
 /* SERVE THE HTML FOR ALL EXCEPT API ROUTES */
@@ -146,7 +166,7 @@ app.post('/api/refreshtoken', verifyToken, function(req, res){
 /* CREATE A TEMPORARY OR PERMANENT USER */
 app.post('/api/users', async function(req, res){
 	const email = req.body.email || null
-	const accountname = req.body.username || null
+	const accountname = req.body.username || "anon"
 	let password = req.body.password || null
 
 	const query =
@@ -172,12 +192,11 @@ app.post('/api/users/login', async (req, res) => {
 			return res.status(422).json({ success: false, message: "Invalid password" })
 		}
 		const token = await createToken({ account_id: user.account_id })
+		update_lastlogin(user.account_id)
 		return res.json({ message: "Logged in", success: true, token })
 	}catch(e){
 		return res.status(500).json({ success: false, error: e })
 	}
-
-
 })
 
 /* GET ALL USERS */
@@ -238,7 +257,6 @@ app.put('/api/users/:id', verifyToken, async function(req, res){
 				await check_userpassword({ account_id: req.token.account_id }, req.body.oldpassword)
 			if(correct == false) return res.json({ success:false, error:"Invalid password" })
 			newpassword = await createhash(req.body.newpassword)
-			console.log(newpassword)
 		}catch(e){
 			return res.status(500).json({ success: false, error: e, message:"password"})
 		}
@@ -253,7 +271,7 @@ app.put('/api/users/:id', verifyToken, async function(req, res){
 		password: newpassword
 	}
 
-	// Create the sql SET string and push values to sqlparams
+	// Create the sql SET string and push values to queryparams
 	const { query, queryparams } = query_from_model(user, [req.token.account_id])
 	// if there is nothing to update
 	if(queryparams.length===1){
@@ -294,6 +312,7 @@ app.get('/api/collection/random', function(req, res){
 
 })
 
+/* GET A LIST OF COLLECTIONS */
 app.get('/api/collections', function(req, res){
 	
 	const query =
@@ -305,6 +324,7 @@ app.get('/api/collections', function(req, res){
 
 })
 
+/* GET A COLLECTION BY ID */
 app.get('/api/collections/:id', function(req, res){
 
 	const query = 
@@ -322,79 +342,91 @@ app.get('/api/collections/:id', function(req, res){
 
 })
 
-/* UPDATE RATING VALUES */
+/* UPDATE RATING VALUES FOR COLLECTION IMAGE RATINGS */
 app.put('/api/collections/:id/rating', function(req, res){
 	const { winner, loser, question } = req.body
 	const id = req.params.id
 
-	if(!!winner && !!loser && (!!question || question==0)) {
-
-		const findrating = `
-			SELECT * FROM rating r
-			LEFT JOIN image i
-			ON i.image_id = r.image_id
-			WHERE r.question_id = $3 AND ( r.image_id=$2 OR r.image_id=$1)
-		`
-
-		const updaterating = `
-			UPDATE rating
-			SET rating = $2
-			WHERE rating_id = $1
-		`
-
-		pool.query(findrating, [parseInt(winner), parseInt(loser), parseInt(question)])
-		.then( result => {
-			if(result.rowCount == 2){
-				const firstwon = result.rows[0].image_id == winner
-				const winnerjson = firstwon ? result.rows[0] : result.rows[1]
-				const loserjson = firstwon ? result.rows[1] : result.rows[0]
-				const newratings = calcRating(winnerjson.rating, loserjson.rating)
-
-				pool.query(updaterating, [winnerjson.rating_id, newratings.winner])
-				.then( pool.query(updaterating, [loserjson.rating_id, newratings.loser] ))
-				.then( () => res.json({ success: true, message: "Ratings updated" }))
-				.catch( err => res.status(500).json({ success: false, data: err }) )
-
-			}else{
-				return res.status(404).json({ success:false, message: "No resource found" })
-			}
-		})
-		.catch( err => res.status(500).json({ success: false, data: err }) )
-	}else{
+	if(!!!winner || !!!loser || !!!question)) {
 		return res.status(400).json({ success:false, message:"invalid parameters" })
 	}
+
+	const findrating = `
+		SELECT * FROM rating r
+		LEFT JOIN image i
+		ON i.image_id = r.image_id
+		WHERE r.question_id = $3 AND ( r.image_id=$2 OR r.image_id=$1)
+	`
+
+	const updaterating = `
+		UPDATE rating
+		SET rating = $2
+		WHERE rating_id = $1
+	`
+
+	pool.query(findrating, [parseInt(winner), parseInt(loser), parseInt(question)])
+	.then( result => {
+		if(result.rowCount == 2){
+			const firstwon = result.rows[0].image_id == winner
+			const winnerjson = firstwon ? result.rows[0] : result.rows[1]
+			const loserjson = firstwon ? result.rows[1] : result.rows[0]
+			const newratings = calcRating(winnerjson.rating, loserjson.rating)
+
+			pool.query(updaterating, [winnerjson.rating_id, newratings.winner])
+			.then( pool.query(updaterating, [loserjson.rating_id, newratings.loser] ))
+			.then( () => res.json({ success: true, message: "Ratings updated" }))
+			.catch( err => res.status(500).json({ success: false, data: err }) )
+
+		}else{
+			return res.status(404).json({ success:false, message: "No resource found" })
+		}
+	})
+	.catch( err => res.status(500).json({ success: false, data: err }) )
 })
 
-app.put('/api/users/:id/stars', function(req, res){
-	var userid = req.params.id
-	var pass = req.body.userhash
-	var starid = req.body.starid
-	console.log(req.params, req.body)
-	console.log(userid, pass, starid)
-	if(!starid || !pass || !userid ){
-		res.status = 404
-		res.json({error:"invalid data"})
-		return
+/* ADD A USER STAR TO COLLECTION */
+app.put('/api/users/:id/stars', verifyToken, function(req, res){
+
+	if(parseInt(req.params.id) !== req.token.account_id){
+		return res.json({ success:false, error:"ID mismatch"})
 	}
-	User.addStar(userid, pass, starid, function(err, response){
-		if(err) throw err;
-		Collection.incrementStarsById(starid, function(err, response){if(err)throw err;})
-		res.json({'star':'added'})
-	})
+
+	const { col_id } = req.body
+	const queryparams = [req.token.account_id, col_id]
+
+	const query = `
+		INSERT INTO star (account_id, col_id)
+		VALUES($1, $2)
+	`
+
+	pool.query(query, queryparams)
+	.then( result => {
+		return res.json({ success: true, message: "Star added!" })
+	}).catch( err => res.status(500).json({ success: false, data: err }) )
+
 })
 
-app.delete('/api/users/:id/stars', function(req, res){
-	var userid = req.params.id
-	var pass = req.body.userhash
-	var starid = req.body.starid
-	User.removeStar(userid, pass, starid, function(err, response){
-		if(err) throw err;
-		Collection.decrementStarsById(starid, function(err, response){if(err)throw err;})
-		res.json({'star':'removed'})
-	})
+/* REMOVE A USER STAR FROM COLLECTION */
+app.delete('/api/users/:id/stars', verifyToken, function(req, res){
+
+	if(parseInt(req.params.id) !== req.token.account_id){
+		return res.json({ success:false, error:"ID mismatch"})
+	}
+
+	const { col_id } = req.body
+	const queryparams = [req.token.account_id, col_id]
+
+	const query = `
+		DELETE FROM star
+		WHERE account_id = $1 AND col_id = $2
+	`
+
+	pool.query(query, queryparams)
+	.then( result => {
+		return res.json({ success: true, message: "Star removed!" })
+	}).catch( err => res.status(500).json({ success: false, data: err }) )
+
 })
-
-
 
 app.get('/api/users/:id/full', function(req, res){
 	User.getStarredCollectionsById(req.params.id, function(err, response){
@@ -411,41 +443,25 @@ app.get('/api/users/:id/collections', function(req, res){
 	})
 })
 
+app.delete('/api/collections/:id', verifyToken, (req, res) => {
 
+	const queryparams = [req.token.account_id, req.params.id]
 
-app.delete('/api/collections/:id', function(req, res){
-	var userid = req.body.userid
-	var userhash = req.body.userhash
-	var collid = req.params.id
-	if(collid && userid && userhash){
-		User.checkCollection(userid, userhash, collid, function(err, response){
-			if (err) throw err;
-			if(response){
-				Collection.removeCollection(collid, function(err, response){
-					if(err)throw err;
-					res.json({success:"deleted"})
-				})
-			}else{
-				res.json({error:"no collection found"})
-			}
-		})
-	}else{
-		res.json({error:"invalid parameters"})
-	}
+	const query = `
+		DELETE FROM collection
+		WHERE owner_id = $1 AND col_id = $2
+	`
+
+	pool.query(query, queryparams)
+	.then( response => {
+		if(response.rowCount == 1){
+			return res.json({ success: true, message: "Collection removed" })
+		}else{
+			return res.status(400).json({ success:false, message:"invalid parameters" })
+		}
+	}).catch( err => res.status(500).json({ success: false, data: err }) )
+
 })
-
-const uniqueCollectionUrl = url => {
-	return new Promise( (resolve, reject) => {
-		pool.query(`SELECT col_id FROM collection WHERE url=$1`, [url])
-		.then( response => {
-			if(response.rowCount==0){
-				return resolve(true)
-			}else{
-				return resolve(false)
-			}
-		}).catch(e => reject(e))
-	})
-}
 
 app.post('/api/collections', verifyToken, async (req, res) => {
 	let url = randomString(5)
@@ -466,7 +482,7 @@ app.post('/api/collections', verifyToken, async (req, res) => {
 
   const col_query =`
   	INSERT INTO
-  	collection(owner_id, title, url, private, nswf)
+  	collection(owner_id, title, url, private, nsfw)
   	VALUES($1,$2,$3,$4,$5)
   	RETURNING col_id
   `
@@ -477,7 +493,7 @@ app.post('/api/collections', verifyToken, async (req, res) => {
   const { col_id } = collection_res.rows[0]
 
   /* MAP IMAGE ARRAY INTO (col_id=$1, url=$2), (...) INSERT VALUES */
-  const insert_query = (prefix, suffix, col_id, array) => {
+  const insert_query_builder = (prefix, suffix, col_id, array) => {
   	const query = array.reduce((loop, url, index, arr) => {
   		let delimiter = index<arr.length-1 ? ', ':''
   		loop += `($1,$${index+2})${delimiter}`
@@ -488,24 +504,20 @@ app.post('/api/collections', verifyToken, async (req, res) => {
   	return [ query, array ]
   }
 
-  console.log("TIME TO MAKE QUERY", col_id, images)
-
   const [ image_query, image_query_params ] =
-  	insert_query(
+  	insert_query_builder(
   		'INSERT INTO image(col_id, url) VALUES ',
   		' RETURNING image_id',
   		col_id,
   		images
   	)
 
- 	console.log(image_query, image_query_params)
-
   const image_res = await pool.query(image_query, image_query_params)
 
   const image_ids = image_res.rows.map(row=>row.image_id)
 
   const [ question_query, question_query_params ] =
-  	insert_query(
+  	insert_query_builder(
   		'INSERT INTO question(col_id, question) VALUES ',
   		' RETURNING question_id',
   		col_id,
@@ -523,7 +535,6 @@ app.post('/api/collections', verifyToken, async (req, res) => {
 	  		pairs.push(`($${i},$${image_ids.length+q})`)
 	  	}
   	}
-  	console.log("PAIRS",pairs)
   	const q = pairs.reduce( (query, pair, index, arr) => {
   		let delimiter = index<arr.length-1 ? ', ':''
   		return query+=pair+delimiter
