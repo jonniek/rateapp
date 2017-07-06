@@ -347,7 +347,7 @@ app.put('/api/collections/:id/rating', function(req, res){
 	const { winner, loser, question } = req.body
 	const id = req.params.id
 
-	if(!!!winner || !!!loser || !!!question)) {
+	if(!!!winner || !!!loser || !!!question) {
 		return res.status(400).json({ success:false, message:"invalid parameters" })
 	}
 

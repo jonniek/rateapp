@@ -9,9 +9,9 @@ const pg = require('pg');
 // note: all config is optional and the environment variables 
 // will be read if the config is not present 
 var config = {
-  user: 'rateapp', //env var: PGUSER 
+  user: 'postgres', //env var: PGUSER 
   database: 'rateapp', //env var: PGDATABASE 
-  password: 'rateapp', //env var: PGPASSWORD 
+  password: 'root', //env var: PGPASSWORD 
   host: 'localhost', // Server hosting the postgres database 
   port: 5432, //env var: PGPORT 
   max: 10, // max number of clients in the pool 
