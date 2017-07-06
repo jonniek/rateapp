@@ -76,6 +76,13 @@ const createhash = (pass) => {
 	})
 }
 
+const randomString = (length) => {
+	var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'
+  var result = ''
+  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)]
+  return result
+}
+
 /* PASSWORD COMPARISON by user where object { account_id: 5 } and plaintext password*/
 const check_userpassword = (where, pass) => {
 	return new Promise( (resolve, reject) => {
@@ -566,13 +573,6 @@ app.post('/api/image', upload.array('image'), function(req, res){
 app.use('/api/*', function(req, res){
 	return res.status(404).json({ success:false, message: "Api route not found" })
 })
-
-function randomString(length) {
-	var chars = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_-'
-  var result = ''
-  for (var i = length; i > 0; --i) result += chars[Math.floor(Math.random() * chars.length)]
-  return result
-}
 
 app.listen(3001)
 console.log('Listening on port 3001...')
