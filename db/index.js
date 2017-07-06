@@ -1,19 +1,16 @@
 /* 
   https://www.npmjs.com/package/pg
 */
-
 const pg = require('pg');
- 
-// create a config to configure both pooling behavior 
-// and client options 
-// note: all config is optional and the environment variables 
-// will be read if the config is not present 
+
+const {user, database, password, host, port } = require('../config')
+
 var config = {
-  user: 'postgres', //env var: PGUSER 
-  database: 'rateapp', //env var: PGDATABASE 
-  password: 'root', //env var: PGPASSWORD 
-  host: 'localhost', // Server hosting the postgres database 
-  port: 5432, //env var: PGPORT 
+  user, //env var: PGUSER 
+  database, //env var: PGDATABASE 
+  password, //env var: PGPASSWORD 
+  host, // Server hosting the postgres database 
+  port, //env var: PGPORT 
   max: 10, // max number of clients in the pool 
   idleTimeoutMillis: 30000, // how long a client is allowed to remain idle before being closed 
 };
