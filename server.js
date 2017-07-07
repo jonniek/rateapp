@@ -39,10 +39,6 @@ const {
 	removeStar
 } = require('./routes/')
 
-/* SERVE THE HTML FOR ALL EXCEPT API ROUTES */
-app.get('/', function(req, res){
-	res.serveFile(path.join(__dirname, 'public', 'index.html'))
-})
 
 /* ------ USER API ------- */
 /* CREATE A TEMPORARY OR PERMANENT USER */
@@ -100,6 +96,18 @@ app.get('/api/users/:id/collections', (req, res) => {
 app.post('/api/image', upload.array('image'), (req, res) =>{
 	res.json({ filename: req.files[0].filename })
 })
+
+
+/* SERVE THE API 404 PAGE */
+app.get('/api/*', function(req, res){
+	res.status(404).json({ success: false, error: "No api route found" })
+})
+
+/* SERVE THE HTML FOR ALL EXCEPT API ROUTES */
+app.get('*', function(req, res){
+	res.sendFile(path.join(__dirname, 'public', 'index.html'))
+})
+
 
 
 app.listen(3001)
