@@ -1,7 +1,8 @@
 const pool = require('../db/')
 const { 
   randomString,
-  createToken
+  createToken,
+  uniqueCollectionUrl
 } = require('../functions')
 
 const createCollection = async (req, res) => {
@@ -15,6 +16,8 @@ const createCollection = async (req, res) => {
   const { hidden, nsfw, title } = req.body
   const images = JSON.parse(req.body.images)
   const questions = JSON.parse(req.body.questions)
+  const categories = JSON.parse(req.body.categories)
+
   const owner_id = req.token.account_id
 
   if(!hidden || !nsfw || !title){
@@ -32,6 +35,40 @@ const createCollection = async (req, res) => {
     await pool.query(col_query, [owner_id, title, url, hidden, nsfw])
 
   const { col_id } = collection_res.rows[0]
+
+  if(categories && categories.length!=0){
+
+    const mapcat = categories.map(cat => cat.toLowerCase().replace(/[^\w\s]/gi, '').trim())
+
+    const cat_values = categories.reduce( (total, cat, index, all) => {
+      let delimiter = index<all.length-1 ? ', ':''
+      return total += `($${index+1})${delimiter}`
+    },"")
+
+    const cat_insert = `
+      INSERT INTO
+      category(category)
+      VALUES ${cat_values}
+      ON CONFLICT DO NOTHING;
+    `
+
+    const cat_first = await pool.query(cat_insert, mapcat)
+    
+    const cat_values2 = categories.reduce( (total, cat, index, all) => {
+      let delimiter = index<all.length-1 ? ' OR ':''
+      return total += `category=$${index+1}${delimiter}` 
+    },"")
+
+    const cat_insert2 = `
+      INSERT INTO collection_category
+      SELECT cat_id, ${col_id} as col_id
+      FROM category
+      WHERE ${cat_values2}
+    `
+
+    const final_cat = pool.query(cat_insert2, mapcat)
+
+  }
 
   /* MAP IMAGE ARRAY INTO (col_id=$1, url=$2), (...) INSERT VALUES */
   const insert_query_builder = (prefix, suffix, col_id, array) => {

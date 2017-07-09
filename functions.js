@@ -44,7 +44,7 @@ const calcRating = (win, lose) =>{
 const verifyToken = (req, res, next) => {
   const { token } = req.body
   if (token) {
-    jwt.verify(token, app.get('superSecret'), function(err, decoded) {      
+    jwt.verify(token, superSecret, function(err, decoded) {      
       if (err) {
         return res.status(422).json({ success: false, message: 'Invalid authentication token.' })   
       } else {
@@ -119,7 +119,7 @@ const query_from_model = (model, queryparams, delimiter=", ") => {
 
 /* TOKEN REFRESH */
 const refreshToken = (token, expiresIn='14d') => {
-  return jwt.sign({account_id:token.account_id}, app.get('superSecret'), { expiresIn })
+  return jwt.sign({account_id:token.account_id}, superSecret, { expiresIn })
 }
 
 /* UPDATE USER LAST LOGIN */

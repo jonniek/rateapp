@@ -53,8 +53,8 @@ export async function removeCollection(id){
     },
     body: JSON.stringify({token})
   })
-
-  return { success } = await response.json()
+  const { success } = await response.json()
+  return success
 }
 
 export async function getUserDeep(id){

@@ -26,16 +26,21 @@ cd client
 npm install
 ```
 
-DB(Change user if nececcary):
+DB(from project root):
 ```
 sudo -u postgres createdb rateapp
 sudo -u postgres psql rateapp < ./db/db-setup.sql
+sudo -u postgres psql
+#You need to set search path to find the schema 
+postgres=#  ALTER USER postgres SET search_path = rateapp,public;
+#change password if nececcary
+postgres=#  ALTER USER Postgres WITH PASSWORD 'Kq9&8L7Av%leXvILquqx';
 ```
-Open up db/index.js and edit the config to match your system:
+Open up db/index.js and edit the config match what you input:
 ```
 user: 'postgres', //env var: PGUSER 
 database: 'rateapp', //env var: PGDATABASE 
-password: 'root', //env var: PGPASSWORD 
+password: 'Kq9&8L7Av%leXvILquqx', //env var: PGPASSWORD 
 host: 'localhost', // Server hosting the postgres database 
 port: 5432, //env var: PGPORT 
 ```

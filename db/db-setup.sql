@@ -1,6 +1,11 @@
-DROP TABLE account, collection, category, collection_category, image, vote, question, rating, comment, stars CASCADE;
+--CREATE SCHEMA
+DROP SCHEMA rateapp CASCADE;
 
-CREATE TABLE account (
+CREATE SCHEMA rateapp;
+
+SET search_path TO rateapp,public;
+
+CREATE TABLE rateapp.account (
   account_id serial PRIMARY KEY,
   email varchar (50),
   accountname varchar (25),
@@ -12,9 +17,9 @@ CREATE TABLE account (
   last_login timestamp not null default now()
 );
 
-CREATE TABLE collection (
+CREATE TABLE rateapp.collection (
   col_id serial PRIMARY KEY,
-  owner_id serial NOT NULL REFERENCES account(account_id) ON DELETE CASCADE,
+  owner_id serial NOT NULL REFERENCES rateapp.account(account_id) ON DELETE CASCADE,
   title varchar (50),
   url varchar (10),
   private boolean NOT NULL DEFAULT false,
@@ -22,55 +27,107 @@ CREATE TABLE collection (
   created_date date not null default now()
 );
 
-CREATE TABLE category(
+CREATE TABLE rateapp.category(
   cat_id serial PRIMARY KEY,
-  category varchar(15)
+  category varchar(15) UNIQUE
 );
 
-CREATE TABLE collection_category (
-  cat_id serial NOT NULL REFERENCES category(cat_id),
-  col_id serial NOT NULL REFERENCES collection(col_id) ON DELETE CASCADE
+CREATE TABLE rateapp.collection_category (
+  cat_id serial NOT NULL REFERENCES rateapp.category(cat_id),
+  col_id serial NOT NULL REFERENCES rateapp.collection(col_id) ON DELETE CASCADE
 );
 
-CREATE TABLE image (
+CREATE TABLE rateapp.image (
   image_id serial PRIMARY KEY,
-  col_id serial REFERENCES collection(col_id) ON DELETE CASCADE,
+  col_id serial REFERENCES rateapp.collection(col_id) ON DELETE CASCADE,
   url varchar(50) NOT NULL
 );
 
-CREATE TABLE vote (
+CREATE TABLE rateapp.vote (
   vote_id serial PRIMARY KEY,
-  vote_winner serial REFERENCES image(image_id),
-  vote_loser serial REFERENCES image(image_id),
-  account_id serial REFERENCES account(account_id) ON DELETE CASCADE,
+  vote_winner serial REFERENCES rateapp.image(image_id),
+  vote_loser serial REFERENCES rateapp.image(image_id),
+  account_id serial REFERENCES rateapp.account(account_id) ON DELETE CASCADE,
   vote_time timestamp default now()
 );
 
-CREATE TABLE question (
+CREATE TABLE rateapp.question (
   question_id serial PRIMARY KEY,
-  col_id serial NOT NULL REFERENCES collection(col_id) ON DELETE CASCADE,
+  col_id serial NOT NULL REFERENCES rateapp.collection(col_id) ON DELETE CASCADE,
   question varchar(50) NOT NULL
 );
 
-CREATE TABLE rating (
+CREATE TABLE rateapp.rating (
   rating_id serial PRIMARY KEY,
   rating smallint NOT NULL DEFAULT 1200,
-  image_id serial REFERENCES image(image_id) ON DELETE CASCADE,
-  question_id serial REFERENCES question(question_id) ON DELETE CASCADE
+  image_id serial REFERENCES rateapp.image(image_id) ON DELETE CASCADE,
+  question_id serial REFERENCES rateapp.question(question_id) ON DELETE CASCADE
 );
 
-CREATE TABLE comment (
+CREATE TABLE rateapp.comment (
   comment_id serial PRIMARY KEY,
   comment varchar(140) NOT NULL,
-  col_id serial REFERENCES collection(col_id),
-  account_id serial REFERENCES account(account_id) ON DELETE CASCADE
+  col_id serial REFERENCES rateapp.collection(col_id),
+  account_id serial REFERENCES rateapp.account(account_id) ON DELETE CASCADE
 );
 
-CREATE TABLE star (
+CREATE TABLE rateapp.star (
   star_id serial PRIMARY KEY,
-  account_id serial NOT NULL REFERENCES account(account_id) ON DELETE CASCADE,
-  col_id serial NOT NULL REFERENCES collection(col_id),
+  account_id serial NOT NULL REFERENCES rateapp.account(account_id) ON DELETE CASCADE,
+  col_id serial NOT NULL REFERENCES rateapp.collection(col_id),
   CONSTRAINT u_constraint UNIQUE (account_id, col_id)
 );
 
 
+-- DATA FETCH FUNCTIONS
+
+CREATE OR REPLACE FUNCTION rateapp.get_collection(colid int) RETURNS json AS 
+$BODY$
+DECLARE
+  found_collection rateapp.collection;
+  questions json;
+  images json;
+  owner json;
+BEGIN
+  -- Load the collection data:
+  SELECT * INTO found_collection
+  FROM rateapp.collection c
+  WHERE c.col_id = colid;  
+
+  -- Get assigned questions:
+  SELECT CASE WHEN COUNT(x) = 0 THEN '[]' ELSE json_agg(x) END INTO questions 
+  FROM (SELECT q.question_id, question
+        FROM rateapp.question q
+        WHERE q.col_id = colid) x;
+
+  -- Get assigned questions:
+  SELECT CASE WHEN COUNT(z) = 0 THEN '[]' ELSE json_agg(z) END INTO owner
+  FROM (SELECT a.account_id, a.accountname, a.avatar_url
+        FROM rateapp.account a
+        WHERE a.account_id = found_collection.owner_id) z;
+
+  -- Get assigned images:
+  SELECT CASE WHEN COUNT(y) = 0 THEN '[]' ELSE json_agg(y) END INTO images
+  FROM (SELECT i.image_id, i.url, array_agg(r.*) as ratings
+        FROM rateapp.image i
+        LEFT JOIN rateapp.rating r
+        ON r.image_id = i.image_id
+        WHERE i.col_id = 2
+        GROUP BY i.image_id
+        ) y;
+
+  -- Build the JSON Response:
+  RETURN (SELECT json_build_object(
+    'id', found_collection.col_id,
+    'owner', owner,
+    'title', found_collection.title,
+    'url', found_collection.url,
+    'private', found_collection.private,
+    'nsfw', found_collection.nsfw,
+    'created_date', found_collection.created_date, 
+    'questions', questions,
+    'images', images));
+
+END
+$BODY$
+LANGUAGE 'plpgsql';

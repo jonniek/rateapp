@@ -1,7 +1,7 @@
 module.exports = config = {
   superSecret: 'Redbeandownstreamdragonfly', //SECRET FOR JSON WEB TOKEN
   /* POSTGRES CONFIG */
-  user: 'rateapp', //env var: PGUSER 
+  user: 'postgres', //env var: PGUSER 
   database: 'rateapp', //env var: PGDATABASE 
   password: 'rateapp', //env var: PGPASSWORD 
   host: 'localhost', // Server hosting the postgres database 
