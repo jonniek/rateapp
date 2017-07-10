@@ -7,7 +7,7 @@ SET search_path TO rateapp,public;
 
 CREATE TABLE rateapp.account (
   account_id serial PRIMARY KEY,
-  email varchar (50),
+  email varchar (50) UNIQUE,
   accountname varchar (25),
   avatar_url varchar (100),
   password varchar (100),
@@ -92,7 +92,7 @@ BEGIN
   -- Load the collection data:
   SELECT * INTO found_collection
   FROM rateapp.collection c
-  WHERE c.col_id = colid;  
+  WHERE c.col_id = colid;
 
   -- Get assigned questions:
   SELECT CASE WHEN COUNT(x) = 0 THEN '[]' ELSE json_agg(x) END INTO questions 
@@ -127,6 +127,49 @@ BEGIN
     'created_date', found_collection.created_date, 
     'questions', questions,
     'images', images));
+
+END
+$BODY$
+LANGUAGE 'plpgsql';
+
+
+
+CREATE OR REPLACE FUNCTION rateapp.get_account(aid int) RETURNS json AS 
+$BODY$
+DECLARE
+  found_account rateapp.account;
+  collections json;
+  starred json;
+BEGIN
+  -- Load the collection data:
+  SELECT * INTO found_account
+  FROM rateapp.account a
+  WHERE a.account_id = aid;
+
+  -- Get assigned questions:
+  SELECT CASE WHEN COUNT(x) = 0 THEN '[]' ELSE json_agg(x) END INTO collections 
+  FROM (SELECT *
+        FROM rateapp.collection c
+        WHERE c.col_id = found_account.account_id) x;
+
+  -- Get assigned questions:
+  SELECT CASE WHEN COUNT(z) = 0 THEN '[]' ELSE json_agg(z) END INTO starred
+  FROM (SELECT *
+        FROM rateapp.collection c
+        INNER JOIN rateapp.star s 
+        ON c.col_id = s.col_id
+        WHERE s.account_id = found_account.account_id) z;
+
+  -- Build the JSON Response:
+  RETURN (SELECT json_build_object(
+    'id', found_account.account_id,
+    'name', found_account.accountname,
+    'avatar', found_account.avatar_url,
+    'of_age', found_account.of_age,
+    'register_date', found_account.register_date,
+    'last_login', found_account.last_login, 
+    'collections', collections,
+    'starred', starred));
 
 END
 $BODY$
