@@ -1,13 +1,43 @@
 import jwtDecode from 'jwt-decode'
 
-export async function createUser(){
-  const response = await fetch("/api/users", {
-    method: "POST",
+const get = (url, query) => fetch(url + stringifyQuery(query))
+const post = (url, body, query) => fetcher(url, "POST", body)
+const put = (url, body, query) => fetcher(url, "PUT", body)
+const del = (url, body, query) => fetcher(url, "DELETE", body)
+const fetcher = (url, method, body, query) => {
+  const finalurl = query ? url+stringifyQuery(query) : url
+  console.log(finalurl)
+  return fetch(finalurl, {
+    method,
+    body: JSON.stringify(body),
+    headers:{
+      'Content-Type': 'application/json',
+      'Accept': 'application/json',
+    },
   })
+}
 
-  const { token, success } = await response.json()
+const stringifyQuery = query => {
+  let output = "?"
+  if (typeof query !== 'object') return ""
 
-  localStorage.setItem("token", token)
+  for (let key in query) {
+    if(query[key] !== null){
+      if(output!=="?") output+='&'
+      output += `${key}=${encodeURIComponent(query[key])}`
+    }
+  }
+  return output
+}
+
+export async function createUser(user={}){
+  const body = { ...user }
+  
+  const response = await post('/api/users', body)
+
+  const { data, success } = await response.json()
+
+  if(success) localStorage.setItem("token", data.token)
 
   return success
 }
@@ -15,17 +45,8 @@ export async function createUser(){
 export async function verifyToken(){
   const token = localStorage.getItem("token")
   if(token){
-    let response = await fetch("/api/verifytoken", {
-      method: "POST",
-      headers:{
-        'Content-Type': 'application/json',
-        'Accept': 'application/json',
-      },
-      body: JSON.stringify({token})
-    })
-
-    const {success} = await response.json()
-
+    const response = await get('/api/verify', { token })
+    const { success } = await response.json()
     return success
   }
   return false

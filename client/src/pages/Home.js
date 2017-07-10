@@ -2,7 +2,7 @@ import React, { Component } from 'react'
 import { NavBar } from '../Components/'
 import { Link } from 'react-router-dom'
 import { Grid, Col, Row } from 'react-bootstrap'
-import { createUser, verifyToken, getUsers } from '../utils/'
+import { createUser, verifyToken } from '../utils/'
 
 export default class Home extends Component {
   constructor(){
@@ -15,7 +15,7 @@ export default class Home extends Component {
 
   goToRandom(){
     this.setState({randoming: true})
-    fetch('/api/random/collection')
+    fetch('/api/collection/random')
     .then(res => res.json() )
     .then( data => {
       this.props.history.push('/collections/'+data.url)
@@ -25,9 +25,10 @@ export default class Home extends Component {
   async componentDidMount(){
     const loggedIn = await verifyToken()
     console.log(loggedIn)
-    if(!loggedIn){
-      createUser()
-      console.log("no token, creating user")
+    if(loggedIn==false){
+      console.log("Invalid token, creating user")
+      const user = await createUser()
+      console.log(user)
     }else{
       console.log("Is token!")
     }

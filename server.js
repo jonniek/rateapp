@@ -91,6 +91,11 @@ app.get('/api/users/:id/collections', (req, res) => {
 	//TODO
 })
 
+/* JUST VERIFY TOKEN */
+app.get('/api/verify', verifyToken, (req, res) => {
+	return res.json({ success: true, message: "Token is valid" })
+})
+
 
 /* IMAGE UPLOAD API */
 app.post('/api/image', upload.array('image'), (req, res) =>{
