@@ -19,7 +19,7 @@ const fetcher = (url, method, body, query) => {
 
 const stringifyQuery = query => {
   let output = "?"
-  if (typeof query !== 'object') return ""
+  if (typeof query !== 'object' || Object.keys(query).length === 0) return ""
 
   for (let key in query) {
     if(query[key] !== null){
@@ -28,6 +28,14 @@ const stringifyQuery = query => {
     }
   }
   return output
+}
+
+export async function getCollections(params={}){
+  const response = await get('/api/collections', params)
+
+  const { data, success } = await response.json()
+  console.log(success, data)
+  return data
 }
 
 export async function createUser(user={}){

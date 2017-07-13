@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom'
 import { Star } from '../Components'
 //import { LinkContainer } from 'react-router-bootstrap'
 import { ButtonToolbar, DropdownButton, MenuItem, Button, Clearfix } from 'react-bootstrap'
-import { createUser, getUser, removeCollection } from '../utils/'
+import { createUser, getUser, removeCollection, getCollections } from '../utils/'
 
 export default class Collections extends Component {
 
@@ -27,19 +27,18 @@ export default class Collections extends Component {
   }
 
   componentDidMount() {
-    createUser().then( (id) => getUser(id)).then( user => {
-      const stars = user.stars || []
+    this.updateCollections()
+  }
 
-      if(this.useCollection===false){
-        const fetchstring = !this.props.user ? "/api/collections" : `/api/users/${this.props.user}/collections`
-        fetch(fetchstring)
-          .then(res => res.json())
-          .then(data => {
-            this.parseCollection(data, stars)
-          })
-      }else{
-        this.parseCollection(this.useCollection, stars)
-      }
+  updateCollections() {
+    getCollections({
+      search: this.state.search,
+      orderfield: this.state.sort,
+      order: this.state.sort_descending===1?'DESC':'ASC',
+      offset: 0
+    })
+    .then( res => {
+      this.parseCollection(res)
     })
   }
 
@@ -48,21 +47,12 @@ export default class Collections extends Component {
       data = []
     }else{
       data.forEach(field => {
-        field.url = "/collections/"+field.url
-        field.categories = field.categories || []
-        if(field.images.length>0){
-          field.image = 
-            field.images[Math.floor(Math.random() * field.images.length)].url
-          delete field.images
-        }else{
-          delete field.images
-          field.image = require('../../public/images/noimage.png')
-        }
+        field.url = "/collections/"+(field.url || "404" )
+        field.image = require('../../public/images/noimage.png')
       })
     }
     this.setState({
       collections: data,
-      userStars: stars,
       fetched: true
     })
   }
@@ -70,14 +60,17 @@ export default class Collections extends Component {
   setSearch(event){
     const str = typeof event==="string" ? event : event.target.value
     this.setState({ search: str })
+    this.updateCollections()
   }
 
   toggleSortOrder(){
     this.setState({ sort_descending: this.state.sort_descending===1?-1:1 })
+    this.updateCollections()
   }
 
   setSort(str){
     this.setState({ sort: str })
+    this.updateCollections()
   }
 
   removeColl(id){
@@ -94,17 +87,10 @@ export default class Collections extends Component {
 
   render() {
     const collections = this.state.collections
-      .filter( item => item.title.toLowerCase().includes(this.state.search.toLowerCase()) || item.categories
-        .reduce( (found, next) => {
-          if(!found && next.toLowerCase().includes(this.state.search.toLowerCase())) return true
-          return found
-        }, false)
-      )
-      .sort(this.sort_functions[this.state.sort].bind(this))
       .map( (item, index) => {
-        const starred = this.state.userStars.indexOf(item._id)!==-1?true:false
+        const starred = this.state.userStars.indexOf(item.col_id)!==-1?true:false
         return(
-          <div key={item._id} className="collection-card">
+          <div key={item.col_id} className="collection-card">
             <Link to={item.url}>
               <div className="loader cardloader">Loading...</div>
               <div
@@ -122,7 +108,7 @@ export default class Collections extends Component {
                 userhash={localStorage.getItem("userhash")}
               />
               <div className="table">
-                <div><span>Votes:</span><span>{item.votes}</span></div>
+                <div><span>Votes:</span><span>Hidden</span></div>
                 <div><span>Categories:</span><span>{item.categories.map( (cat,i) => {
                     return(
                       <span
@@ -134,8 +120,8 @@ export default class Collections extends Component {
                   </span>
                 </div>
                 <div><span>Creator:</span>
-                  <span><Link to={{ pathname: `/users/${item.ownerId._id}`, user: item.ownerId.username }}>
-                      { item.ownerId.username }
+                  <span><Link to={{ pathname: `/users/${item.owner.id}` }}>
+                      { item.owner.accountname }
                     </Link>
                   </span>
                 </div>
