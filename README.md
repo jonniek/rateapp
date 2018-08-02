@@ -3,7 +3,7 @@
 Let users create collections of images and criteria that images will be ranked by. Users will vote between 2 random images which one matches the criteria better. This way the collection will get ranked in a crowdsourced order.  
   
 ## NOTE
-This projects development is halted. The master branch is not completely functional. The last working prototype can be found in the releases(with correct readme).
+This projects development is halted. The master branch is not completely functional. The last working prototype can be found in the releases(with correct readme) or [here](https://github.com/jonniek/rateapp/tree/v1.0).
 
 ### Requirements
 You need postgres installed for the database. [Install guide ubuntu](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04)  
